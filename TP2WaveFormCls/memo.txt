@@ -1,2 +1,16 @@
-cd C:\$\mbd\utility
-python -m TP2WaveFormCls
+公式サイトを開く
+https://www.python.org/downloads/windows/
+インストーラ起動時に 必ずチェック
+Add Python to PATH
+
+pip install pandas matplotlib openpyxl plotly
+
+pythonをVSCでデバックする。
+
+0. 事前準備
+・Python 拡張機能をインストール（Microsoft 製の “Python”）。
+「Python extension for Visual Studio Code」（Microsoft製）。
+・ワークスペースをプロジェクトフォルダに設定。
+１．アクティブなエディタを .py にする
+対処：デバッグしたい .py ファイルを開いて、エディタをアクティブにしてから左の「実行とデバッグ」を開く。
+その状態で F5 を押すと、自動で 「Python: Current File」（= Python File）構成が選ばれます。
