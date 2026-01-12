@@ -1,0 +1,2 @@
+cd C:\$\mbd\utility
+python -m TP2WaveFormCls
