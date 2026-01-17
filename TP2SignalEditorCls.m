@@ -3,8 +3,6 @@ classdef TP2SignalEditorCls
 % testPatternSimple.xlsxファイルの左端から3列目（Time列含む）までを入力データとしたい場合
 % % TP2SignalEditor クラスをインスタンス化;データを処理
 % editor = TP2SignalEditorCls('testPatternSimple.xlsx', '1:3');editor.process();
-% editor = TP2SignalEditorCls('TV2.xlsx', '1:4');editor.process();
-% editor = TP2SignalEditorCls('TV3.xlsx', '1:4');editor.process();
     properties
         XlsFile
         SignalRange
@@ -63,13 +61,13 @@ classdef TP2SignalEditorCls
             for p = 1:length(sigrawdata)
                 scenario{p} = Simulink.SimulationData.Dataset;
                 % 小数点3桁に丸める
-                time = round(sigrawdata(p).data(:,1), 3);
-                % time = sigrawdata(p).data(:,1);    
+                time = round(sigrawdata(p).data(:,1), 3);   
                 for n = 2:length(sigrawdata(p).labels)
                     data = sigrawdata(p).data(:,n);
                     signal = timeseries(data, time);
                     signal.TimeInfo.Format = '%5.4g';
                     signal.Name = sigrawdata(p).labels{n};
+                    signal.DataInfo.Interpolation = 'zoh';%stair状
                     scenario{p} = scenario{p}.addElement(signal);
                 end
                 scenarioName = sheets{p};
@@ -79,18 +77,16 @@ classdef TP2SignalEditorCls
             matfile = [obj.XlsFile '.mat'];
             save(matfile, '-struct', 'signalEditorData');
 
-            modelName = 'SignalEditorModel';
+            % Excelファイル名から拡張子を除いた名前を取得
+            [~, modelName, ~] = fileparts(obj.XlsFile);
             if ~bdIsLoaded(modelName)
                 new_system(modelName);
             end
             open_system(modelName);
-
-            blockPath = [modelName, '/SignalEditor'];
+            blockPath = [modelName, '/', modelName];
             add_block('simulink/Sources/Signal Editor', blockPath, 'MakeNameUnique', 'on');
-
             se_handle = find_system(gcs, 'FindAll', 'on', 'BlockType', 'SubSystem', 'MaskType', 'SignalEditor');
             set_param(se_handle, 'FileName', matfile);
-
             save_system(modelName);
         end
     end
