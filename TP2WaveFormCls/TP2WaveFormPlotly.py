@@ -6,7 +6,6 @@ from pathlib import Path
 
 
 class TP2WaveFormPlotly:
-
     # ------------------------------
     def __init__(self, xlsx_file, col_range, signal_list_file):
         base_dir = Path(__file__).resolve().parent
@@ -39,6 +38,7 @@ class TP2WaveFormPlotly:
         return re.sub(r"\[.*?\]", "", s)
 
     def _is_input(self, sig):
+        # sig が "in" で始まっていれば True、そうでなければ False を返す
         return sig.startswith("in")
 
     # ------------------------------
@@ -112,7 +112,8 @@ class TP2WaveFormPlotly:
                     name=sig,
                     line=dict(
                         shape="hv",
-                        color="royalblue" if self._is_input(sig) else "firebrick"
+                        # sig が入力信号なら青、入力でなければ桃色
+                        color="royalblue" if self._is_input(sig) else "pink"
                     )
                 ),
                 row=row,
@@ -126,6 +127,8 @@ class TP2WaveFormPlotly:
                     continue
 
                 if "[拡大]" in c:
+                    # コメントに [拡大] が含まれていたら
+                    # 「どの信号(sig)を、どの時刻(t)で拡大するか」 を記録
                     expand_events.append((sig, t))
 
                 if "[操作]" in c or "[観点]" in c:
@@ -157,21 +160,34 @@ class TP2WaveFormPlotly:
         self, sheet_name, time, sig_names,
         sig_data, expand_events, html_path
     ):
-        WIDTH = 0.025
+        # 拡大の範囲
+        # 中心:t0
+        WIDTH = 0.02
+        # WIDTH = 0.025
 
         for sig, t0 in expand_events:
             idx = sig_names.index(sig)
             y = sig_data.iloc[:, idx]
             mask = (time >= t0 - WIDTH) & (time <= t0 + WIDTH)
-
+            # 拡大用Figを生成する
             fig = go.Figure()
             fig.add_trace(
                 go.Scatter(
                     x=time[mask],
                     y=y[mask],
                     mode="lines+markers",
-                    line=dict(shape="hv")
+                    line=dict(
+                        shape="hv",
+                        color="royalblue" if self._is_input(sig) else "pink"
+                    )    
                 )
+            )
+
+            # 拡大波形の中心へ破線を追加
+            fig.add_vline(
+               x=t0,
+                line_dash="dash",
+                line_width=1,
             )
 
             fig.update_layout(
