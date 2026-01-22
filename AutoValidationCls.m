@@ -541,6 +541,13 @@ function outSigData(~, arg_wb, arg_data, arg_testpattern)
     pos_s = get(sh_new, 'Cells', 1, 1);
     pos_e = get(sh_new, 'Cells', pos_row, pos_col);
     rng = get(sh_new, 'Range', pos_s, pos_e);
+
+% --- Time列を必ず左端に追加 ---
+if ~strcmp(arg_data{1,1}, 'Time')
+    time_col = arg_data(:,1);      % Time列（evaluateSimulationOutputで生成済み）
+    arg_data = [time_col, arg_data(:,2:end)];
+end
+
     rng.Value = arg_data;
 
     offset = 0;
