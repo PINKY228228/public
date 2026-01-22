@@ -149,17 +149,27 @@ class TP2WaveFormPlotly:
         self._append_html(html_path, fig, first)
 
         self._write_expand_figures(
-            sheet_name, time, sig_names,
-            sig_data, expand_events, html_path
+            sheet_name, time, sig_names, sig_data,
+            comments, expand_events, html_path
         )
+
+        #self._write_expand_figures(
+        #    sheet_name, time, sig_names,
+        #    sig_data, expand_events, html_path
+        #)
 
         return False
 
     # ------------------------------
     def _write_expand_figures(
-        self, sheet_name, time, sig_names,
-        sig_data, expand_events, html_path
+    self, sheet_name, time, sig_names,
+    sig_data, comments, expand_events, html_file
     ):
+
+    #def _write_expand_figures(
+    #    self, sheet_name, time, sig_names,
+    #    sig_data, expand_events, html_path
+    #):
         # 拡大の範囲
         # 中心:t0
         WIDTH = 0.02
@@ -183,6 +193,7 @@ class TP2WaveFormPlotly:
                 )
             )
 
+            # 拡大波形内へコメント追加
             # 拡大波形の中心へ破線を追加
             fig.add_vline(
                x=t0,
@@ -190,9 +201,23 @@ class TP2WaveFormPlotly:
                 line_width=1,
             )
 
+            # t0 に一番近い行のコメントを取る
+            idx0 = (time - t0).abs().idxmin()
+            comment = comments.loc[idx0]
+
+            if isinstance(comment, str) and comment.strip():
+                fig.add_annotation(
+                x=t0,
+                y=y[mask].iloc[len(y[mask]) // 2],
+                text=self._strip_tag(comment),
+                showarrow=True,
+                ax=0,
+                ay=-40,
+            )
+
             fig.update_layout(
                 title=f"{sheet_name} 拡大: {sig} @ {t0:.3f}",
                 height=400
             )
-
-            self._append_html(html_path, fig, False)
+            self._append_html(html_file, fig, False)
+            #self._append_html(html_path, fig, False)
