@@ -1,5 +1,6 @@
-function countSimulinkBlocksInFolder()
-% フォルダ選択 → 配下の Simulink モデルごとにブロック数を表示
+function countSimulinkBlocksInFolderRecursive()
+% フォルダ選択 → 配下すべてのサブフォルダを再帰的に探索し
+% Simulinkモデルごとにブロック数を表示
 
     targetDir = uigetdir(pwd, 'Simulinkモデルのあるフォルダを選択');
     if targetDir == 0
@@ -7,17 +8,18 @@ function countSimulinkBlocksInFolder()
         return;
     end
 
+    % 再帰的に .slx / .mdl を収集
     files = [ ...
-        dir(fullfile(targetDir,'*.slx')); ...
-        dir(fullfile(targetDir,'*.mdl'))  ...
+        dir(fullfile(targetDir,'**','*.slx')); ...
+        dir(fullfile(targetDir,'**','*.mdl'))  ...
     ];
 
     if isempty(files)
-        disp('指定フォルダに Simulink モデルが見つかりません。');
+        disp('指定フォルダ配下に Simulink モデルが見つかりません。');
         return;
     end
 
-    fprintf('Target Folder: %s\n\n', targetDir);
+    fprintf('Target Folder (recursive): %s\n\n', targetDir);
 
     for k = 1:numel(files)
         modelFile = fullfile(files(k).folder, files(k).name);
@@ -27,8 +29,8 @@ function countSimulinkBlocksInFolder()
             load_system(modelFile);
 
             blocks = find_system(modelName, ...
-                'LookUnderMasks','all', ...   % ← 必ず最初
-                'FollowLinks','on', ...       % ← 必ず最初
+                'LookUnderMasks','all', ...
+                'FollowLinks','on', ...
                 'Type','Block');
 
             fprintf('Model: %-30s  Blocks: %d\n', ...
