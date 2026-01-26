@@ -1,5 +1,5 @@
 pip install pandas openpyxl plotly
-
+pip list
 cd C:\$\mbd\utility
 python -m TP2WaveFormCls
 
