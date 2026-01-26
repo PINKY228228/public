@@ -1,0 +1,26 @@
+pip install pandas openpyxl plotly
+
+cd C:\$\mbd\utility
+python -m TP2WaveFormCls
+
+.vscodeを新規作成
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "TP2WaveFormCls (module)",
+            "type": "python",
+            "request": "launch",
+
+            // ★ここが最重要
+            "module": "TP2WaveFormCls",
+
+            // 作業ディレクトリ
+            "cwd": "C:/$/mbd/utility",
+
+            // ターミナルで実行（print確認用）
+            "console": "integratedTerminal"
+        }
+    ]
+}
+
