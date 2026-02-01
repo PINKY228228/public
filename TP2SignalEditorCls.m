@@ -3,15 +3,24 @@ classdef TP2SignalEditorCls
 % testPatternSimple.xlsxファイルの左端から3列目（Time列含む）までを入力データとしたい場合
 % % TP2SignalEditor クラスをインスタンス化;データを処理
 % editor = TP2SignalEditorCls('testPatternSimple.xlsx', '1:3');editor.process();
+% editor = TP2SignalEditorCls('testPatternSimple2.xlsx', '1:5');editor.process();
+% editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4');editor.process();
+% editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4', 0.01);editor.process();
     properties
         XlsFile
         SignalRange
+        Ts          % [] or scalar
     end
     
     methods
-        function obj = TP2SignalEditorCls(xlsfile, SignalRange)
+        function obj = TP2SignalEditorCls(xlsfile, SignalRange, Ts)
             obj.XlsFile = xlsfile;
             obj.SignalRange = SignalRange;
+            if nargin < 3 || isempty(Ts)
+                obj.Ts = [];
+            else
+                obj.Ts = Ts;
+            end
         end
         
         function process(obj)
@@ -60,25 +69,50 @@ classdef TP2SignalEditorCls
             scenario{numSheets} = '';
             for p = 1:length(sigrawdata)
                 scenario{p} = Simulink.SimulationData.Dataset;
-                % 小数点3桁に丸める
-                time = round(sigrawdata(p).data(:,1), 3);   
+                % % 小数点3桁に丸める
+                time = round(sigrawdata(p).data(:,1), 3);
                 for n = 2:length(sigrawdata(p).labels)
                     data = sigrawdata(p).data(:,n);
-                    signal = timeseries(data, time);
+                    if isempty(obj.Ts)
+                        % 従来挙動
+                        signal = timeseries(data, time);
+                    else
+                        % ZOH 等間隔化
+                        signal = TP2SignalEditorCls.resampleZOH(time, data, obj.Ts);
+                    end
                     signal.TimeInfo.Format = '%5.4g';
                     signal.Name = sigrawdata(p).labels{n};
-                    signal.DataInfo.Interpolation = 'zoh';%stair状
+                    signal.DataInfo.Interpolation = 'zoh';
                     scenario{p} = scenario{p}.addElement(signal);
                 end
-                scenarioName = sheets{p};
+                
+                % for n = 2:length(sigrawdata(p).labels)
+                %     data = sigrawdata(p).data(:,n);
+                %     signal = timeseries(data, time);
+                %     signal.TimeInfo.Format = '%5.4g';
+                %     signal.Name = sigrawdata(p).labels{n};
+                %     signal.DataInfo.Interpolation = 'zoh';%stair状
+                %     scenario{p} = scenario{p}.addElement(signal);
+                % end
+                scenarioNameRaw = sheets{p};
+                % 日本語シート名対応
+                scenarioName = matlab.lang.makeValidName(scenarioNameRaw);
                 signalEditorData.(scenarioName) = scenario{p};
+                % 日本語シート名対応
+                % 対応不可
+                % scenarioKey = sprintf('Scenario%d', p);   % ← MATLAB安全名
+                % scenario{p}.Name = sheets{p};             % ← 日本語シナリオ名（表示用）
+                % signalEditorData.(scenarioKey) = scenario{p};
             end
 
             matfile = [obj.XlsFile '.mat'];
             save(matfile, '-struct', 'signalEditorData');
 
             % Excelファイル名から拡張子を除いた名前を取得
-            [~, modelName, ~] = fileparts(obj.XlsFile);
+            % [~, modelName, ~] = fileparts(obj.XlsFile);
+            % 日本語のEXCELブック名対応
+            [~, modelNameRaw, ~] = fileparts(obj.XlsFile);
+            modelName = matlab.lang.makeValidName(modelNameRaw);
             if ~bdIsLoaded(modelName)
                 new_system(modelName);
             end
@@ -92,6 +126,15 @@ classdef TP2SignalEditorCls
     end
     
     methods (Static)
+        function ts = resampleZOH(time, data, Ts)
+            % ZOH リサンプリング
+            tStart = time(1);
+            tEnd   = time(end);
+            tNew   = (tStart:Ts:tEnd).';
+            dataNew = interp1(time, data, tNew, 'previous', 'extrap');
+            ts = timeseries(dataNew, tNew);
+        end
+
         function sigrawdata = getSignalFromRaw(inData, keywd)
             sigrawdata = struct('name', {}, 'row', {}, 'data', {}, 'labels', {}, 'datatypes', {}, 'numericdata', {});
             numRows = size(inData, 1);
