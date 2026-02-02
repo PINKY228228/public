@@ -127,13 +127,28 @@ classdef TP2SignalEditorCls
     
     methods (Static)
         function ts = resampleZOH(time, data, Ts)
-            % ZOH リサンプリング
-            tStart = time(1);
-            tEnd   = time(end);
+            % ZOH リサンプリング（Time重複対応）
+            % === ① Time重複除去（最初の出現を採用） ===
+            % 最後の行を有効にする方法
+            [timeUniq, ia] = unique(time, 'last');
+            dataUniq = data(ia, :);
+            % === ② 等間隔 ZOH ===
+            tStart = timeUniq(1);
+            tEnd   = timeUniq(end);
             tNew   = (tStart:Ts:tEnd).';
-            dataNew = interp1(time, data, tNew, 'previous', 'extrap');
+            dataNew = interp1(timeUniq, dataUniq, tNew, 'previous', 'extrap');
+
             ts = timeseries(dataNew, tNew);
         end
+
+        % function ts = resampleZOH(time, data, Ts)
+        %     % ZOH リサンプリング
+        %     tStart = time(1);
+        %     tEnd   = time(end);
+        %     tNew   = (tStart:Ts:tEnd).';
+        %     dataNew = interp1(time, data, tNew, 'previous', 'extrap');
+        %     ts = timeseries(dataNew, tNew);
+        % end
 
         function sigrawdata = getSignalFromRaw(inData, keywd)
             sigrawdata = struct('name', {}, 'row', {}, 'data', {}, 'labels', {}, 'datatypes', {}, 'numericdata', {});
