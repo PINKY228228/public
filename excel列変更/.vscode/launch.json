@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug move_excel_columns",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/move_excel_columns.py",
+            "console": "integratedTerminal",
+            "args": [
+                "test.xlsx",
+                "2:3",
+                "6:7"
+            ]
+        }
+    ]
+}
