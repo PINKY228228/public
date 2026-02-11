@@ -1,7 +1,6 @@
 classdef AutoValidationCls
-% AutoValidationCls('SE', 'logSignalsTV2.txt', 1);
-% AutoValidationCls('SE', 'logSignalsTV3.txt', 1);
-% AutoValidationCls('SE', 'logSignalstestPatternSimple2.xlsx.txt', 1);
+% AutoValidationCls('logSignalstestPatternSimple2.xlsx.txt', 1);
+% AutoValidationCls('logSignalstestPatternSimple2TC2.xlsx.txt', 1);
 % 第二引数形式
 % net_val
 % net_val2
@@ -19,17 +18,19 @@ classdef AutoValidationCls
     end
     
     methods
-        function obj = AutoValidationCls(arg, filename, mode)
+        function obj = AutoValidationCls(filename, mode)
+            clc;
             % コンストラクタの実行時に引数を使って設定する
             obj.modelName = bdroot();
             obj.signalList = obj.readSignalNames(filename);
+            % keys(obj.signalList)
             [err, msg] = obj.chkPreReq();
             if err
                 msgbox(msg);
                 return;
             end
 
-            [err, msg, obj.config] = obj.initConfig(arg, mode);
+            [err, msg, obj.config] = obj.initConfig(mode);
             if err
                 msgbox(msg);
                 return;
@@ -52,19 +53,18 @@ classdef AutoValidationCls
         end
 
         %% 
-        function signalList = readSignalNames(obj, filename)
-            % ファイルを読み込み、信号名をリストとして返す
-            try
-                % ファイルから信号名を取得
-                fid = fopen(filename, 'r');
-                if fid == -1
-                    error('ファイルが開けませんでした: %s', filename);
-                end
-                signalList = textscan(fid, '%s', 'Delimiter', '\n');
-                fclose(fid);
-            catch
-                error('信号名の取得に失敗しました: %s', filename);
+        function signalList = readSignalNames(~, filename)
+            signalList = containers.Map('KeyType','char','ValueType','any');
+            fid = fopen(filename);
+            tline = fgetl(fid);
+            while ischar(tline)
+                parts = strsplit(strtrim(tline), ',');
+                scenario = strtrim(parts{1});
+                signals  = strtrim(parts(2:end));
+                signalList(scenario) = signals;
+                tline = fgetl(fid);
             end
+            fclose(fid);
         end
         
         %% 
@@ -91,7 +91,7 @@ classdef AutoValidationCls
         end
 
         %% 
-function [err, msg, ret] = initConfig(~, mode, okng_mode)
+function [err, msg, ret] = initConfig(~, okng_mode)
             err = 0;
             msg = '';
     
@@ -110,14 +110,7 @@ function [err, msg, ret] = initConfig(~, mode, okng_mode)
                     warning('off', ret.message.warning{1});
                 end
         
-                % モード選択 ("SB" = Signal Builder, "SE" = Signal Editor)
                 ret.okng_mode=okng_mode;
-                if strcmp(mode, 'SB')
-                    ret.mode = 'SB';
-                    ret.signalBuilder.handle = find_system(ret.model.name, 'FindAll', 'on', 'MaskType', 'Sigbuilder block');
-                    [ret.signalBuilder.time, ~, ~, ret.signalBuilder.testpattern] = signalbuilder(ret.signalBuilder.handle);
-                    ret.signalBuilder.numGroups = length(ret.signalBuilder.testpattern);
-                elseif strcmp(mode, 'SE')
                     ret.mode = 'SE';
                     ret.signalEditor.handle = find_system(ret.model.name, 'FindAll', 'on', 'BlockType', 'SubSystem', 'MaskType', 'SignalEditor');
             % 取得できるパラメータ名を表示
@@ -161,9 +154,6 @@ function [err, msg, ret] = initConfig(~, mode, okng_mode)
                         ret.signalEditor.scenarioDetails(i).numVariables = numVariables;
                         ret.signalEditor.scenarioDetails(i).stopTimes = stopTimes;
                     end
-                else
-                    error('無効なモード指定です。 "SB" または "SE" を指定してください。');
-                end
                 catch e
                     err = 1;
                     if isempty(e.stack)
@@ -227,44 +217,54 @@ function [err, msg, ret] = exeSimulation(obj, arg_config)
         col_mdl = 1;
         col_src = 2;
 
-         if strcmp(arg_config.mode, 'SB')
-            numTests = arg_config.signalBuilder.numGroups;
-        elseif strcmp(arg_config.mode, 'SE')
-            numTests = arg_config.signalEditor.numScenarios;
-        else
-            error('無効なモード');
+        allScenarios = {arg_config.signalEditor.scenarioDetails.scenarioName};
+        targetScenarios = keys(obj.signalList);  % Mapのキー
+
+        % 実行対象だけ抽出
+        validIdx = find(ismember(allScenarios, targetScenarios));
+        % numTests を arg_config に格納して渡す。
+        ret.validIdx = validIdx;
+
+        for k = 1:length(validIdx)% numTests
+            i = validIdx(k);   % ← 実際のscenario index
+            clear mex;
+            TCName = '';
+            simout = [];
+             % --- ① シミュレーション実行と保存 ---
+            try
+                [simout, TCName] = obj.runSingleSimulation(i, arg_config);
+                disp(TCName);
+                save([TCName, '.mat'], 'simout', '-v7.3');
+            catch e
+                err = 1;
+                msg = {'シミュレーション実施で異常発生';
+                [e.stack(1).name, ' (line: ', num2str(e.stack(1).line), ')']};
+            end
+
+            % --- ② SDIログ取得・評価処理 ---
+            try
+                scenarioName = arg_config.signalEditor.scenarioDetails(i).scenarioName;
+                if isKey(obj.signalList, scenarioName)
+                    targetSignals = obj.signalList(scenarioName);
+                else
+                    continue  % txtに無いシナリオはスキップ
+                end
+                [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
+                obj.evaluateSimulationOutput(simout, {targetSignals}, arg_config.okng_mode);        
+                ret.result.sigName{k} = tmp_sigdata;
+                ret.result.rawdata{k} = tmp_rawdata;
+                ret.result.editdata{k} = tmp_editdata;
+                if any(strcmp(tmp_judgement,'NG'))
+                    ret.result.judgement{k,1} = 'NG';
+                else
+                    ret.result.judgement{k,1} = 'OK';
+                end
+            catch e
+                err = 1;
+                msg = {'評価処理失敗';
+                [e.stack(1).name, ' (line: ', num2str(e.stack(1).line), ')']};
+            end
         end
-
-for i = 1:numTests
-    clear mex;
-    TCName = '';
-    simout = [];
-
-    % --- ① シミュレーション実行と保存 ---
-    try
-        [simout, TCName] = obj.runSingleSimulation(i, arg_config);
-        save([TCName, '.mat'], 'simout', '-v7.3');
-    catch e
-        err = 1;
-        msg = {'シミュレーション実施で異常発生';
-        [e.stack(1).name, ' (line: ', num2str(e.stack(1).line), ')']};
-    end
-
-    % --- ② SDIログ取得・評価処理 ---
-    try
-        [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
-            obj.evaluateSimulationOutput(simout, arg_config.logSignals, arg_config.okng_mode);
-        ret.result.sigName{i} = tmp_sigdata;
-        ret.result.rawdata{i} = tmp_rawdata;
-        ret.result.editdata{i} = tmp_editdata;
-        ret.result.judgement = [ret.result.judgement; tmp_judgement];
-
-    catch e
-        err = 1;
-        msg = {'評価処理失敗';
-        [e.stack(1).name, ' (line: ', num2str(e.stack(1).line), ')']};
-    end
-end
 end
 
 %% 
@@ -315,7 +315,7 @@ function [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
                 % 必要なら break; して外側に戻る
                 continue;
                 
-            elseif strcmp(name_j, [signalLists{j} '_ex'])
+            elseif strcmp(name_j, [signalLists{j} '_ideal'])
                 simout.logsout{jj}.Name;
                 signal_ex_data =  simout.logsout{jj}.Values.Data;
                 continue;
@@ -326,8 +326,10 @@ function [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
 
         if flg
             flg = 0;
-            tmp_rawdata = [tim_tit; num2cell(simout.logsout{j}.Values.Time)];
-            tmp_editdata = {};
+            timeVec = simout.logsout{jj}.Values.Time;  % ← jjに合わせる
+            timeCol = num2cell(timeVec);
+            tmp_editdata = [{'Time'; ''}; timeCol];
+            tmp_rawdata  = [{'Time'; ''}; timeCol];
             tmp_sigdata = {};
         end
 
@@ -418,15 +420,12 @@ function [err, msg] = outResult(obj, arg_config)
     ex.Visible = 1;
     try
         obj.outSummary(wb, arg_config);
-        if strcmp(arg_config.mode, 'SB')
-            for i=1:length(arg_config.signalBuilder.testpattern)
-                obj.outSigData(wb, arg_config.result.editdata{i}, arg_config.signalBuilder.testpattern{i});
-            end
-        elseif strcmp(arg_config.mode, 'SE')
-            for i=1:arg_config.signalEditor.numScenarios                
-                obj.outSigData(wb, arg_config.result.editdata{i}, arg_config.signalEditor.scenarioDetails(i).activeScenario);
-            end            
-        else    
+        for i = 1:length(arg_config.validIdx)
+            idx = arg_config.validIdx(i);
+            % disp(arg_config.result.editdata)
+            obj.outSigData(wb, ...
+            arg_config.result.editdata{i}, ...
+            arg_config.signalEditor.scenarioDetails(idx).scenarioName);
         end
         wb.Sheets(1).Select;
         wb.SaveAs(arg_config.result.file);
@@ -452,7 +451,7 @@ function outSummary(~, arg_wb, arg_config)
     if strcmp(arg_config.mode, 'SB')
         tp_num = length(arg_config.signalBuilder.testpattern);
     elseif strcmp(arg_config.mode, 'SE')
-        tp_num = arg_config.signalEditor.numScenarios;
+        tp_num = length(arg_config.validIdx);
     else
     end    
     sig_num = length(arg_config.result.sigName{1});
@@ -479,9 +478,10 @@ function outSummary(~, arg_wb, arg_config)
         tp_range.Value = [{'テストパターン'}; cell(arg_config.signalEditor.numScenarios, 1)];
 
         % シナリオ数分ループして scenarioName を追加
-        for i = 1:arg_config.signalEditor.numScenarios
-            tp_range.Value{i+1} = arg_config.signalEditor.scenarioDetails(i).scenarioName;
-        end
+        for k = 1:length(arg_config.validIdx)
+            idx = arg_config.validIdx(k);
+            tp_range.Value{k+1} = arg_config.signalEditor.scenarioDetails(idx).scenarioName;
+        end   
     else
     end    
     % 信号データ
@@ -496,10 +496,6 @@ function outSummary(~, arg_wb, arg_config)
         tp_merge = get(sh, 'Range', tp_merge_s, tp_merge_e);
         % tp_merge.Merge;
     end
-
-%     sum_range = get(sh, 'Range', tp_pos_s, sig_pos_e);
-%     sum_range.Borders.LineStyle = 1;
-
     tit_pos_s = tp_pos_s;
     tit_pos_e = get(sh, 'Cells', row_s, sig_col_e);
     tit_range = get(sh, 'Range', tit_pos_s, tit_pos_e);
@@ -543,10 +539,10 @@ function outSigData(~, arg_wb, arg_data, arg_testpattern)
     rng = get(sh_new, 'Range', pos_s, pos_e);
 
 % --- Time列を必ず左端に追加 ---
-if ~strcmp(arg_data{1,1}, 'Time')
-    time_col = arg_data(:,1);      % Time列（evaluateSimulationOutputで生成済み）
-    arg_data = [time_col, arg_data(:,2:end)];
-end
+% if ~strcmp(arg_data{1,1}, 'Time')
+%     time_col = arg_data(:,1);      % Time列（evaluateSimulationOutputで生成済み）
+%     arg_data = [time_col, arg_data(:,2:end)];
+% end
 
     rng.Value = arg_data;
 
@@ -573,6 +569,5 @@ end
         sh_new.Name = [arg_testpattern, '#'];
     end
 end
-
     end
 end
