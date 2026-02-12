@@ -249,8 +249,10 @@ function [err, msg, ret] = exeSimulation(obj, arg_config)
                 else
                     continue  % txtに無いシナリオはスキップ
                 end
+                % [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
+                % obj.evaluateSimulationOutput(simout, {targetSignals}, arg_config.okng_mode);
                 [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
-                obj.evaluateSimulationOutput(simout, {targetSignals}, arg_config.okng_mode);        
+                obj.evaluateSimulationOutput(simout, targetSignals, arg_config.okng_mode);
                 ret.result.sigName{k} = tmp_sigdata;
                 ret.result.rawdata{k} = tmp_rawdata;
                 ret.result.editdata{k} = tmp_editdata;
@@ -303,7 +305,8 @@ function [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
     numSignals = datasetSignals.numElements;
     
     flg = 1;
-    signalLists = targetSignals{1};
+    signalLists = targetSignals;
+    % signalLists = targetSignals{1};
     for j = 1:length(signalLists)
         for jj = 1:numel(simout.logsout.getElementNames)
             name_j = simout.logsout{jj}.Name;
@@ -444,6 +447,9 @@ end
 
 %% 
 function outSummary(~, arg_wb, arg_config)
+% === 全シナリオの信号を union で取得 ===
+allSig = unique([arg_config.result.sigName{:}]);
+sig_num = length(allSig);
     sheet_name = 'Summary';
     pos_env_name = 'D9';
     pos_sim_date = 'D10';
@@ -454,7 +460,7 @@ function outSummary(~, arg_wb, arg_config)
         tp_num = length(arg_config.validIdx);
     else
     end    
-    sig_num = length(arg_config.result.sigName{1});
+    % sig_num = length(arg_config.result.sigName{1});
 
     row_s = 13;
     row_e = row_s + tp_num;
@@ -488,7 +494,25 @@ function outSummary(~, arg_wb, arg_config)
     sig_pos_s = get(sh, 'Cells', row_s, sig_col_s);
     sig_pos_e = get(sh, 'Cells', row_e, sig_col_e);
     sig_range = get(sh, 'Range', sig_pos_s, sig_pos_e);
-    sig_range.Value = [arg_config.result.sigName{1,1}; arg_config.result.judgement];
+
+summaryCell = cell(tp_num+1, sig_num);
+% ヘッダ
+summaryCell(1,:) = allSig;
+% データ
+for r = 1:tp_num
+    scenarioSig = arg_config.result.sigName{r};
+
+    for c = 1:sig_num
+        if ismember(allSig{c}, scenarioSig)
+            summaryCell{r+1,c} = arg_config.result.judgement{r};
+        else
+            summaryCell{r+1,c} = '-';
+        end
+    end
+end
+sig_range.Value = summaryCell;
+    
+    % sig_range.Value = [arg_config.result.sigName{1,1}; arg_config.result.judgement];
 
     for i=0:tp_num
         tp_merge_s = get(sh, 'Cells', (row_s + 1), tp_col);
