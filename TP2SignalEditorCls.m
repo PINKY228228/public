@@ -6,6 +6,7 @@ classdef TP2SignalEditorCls
 % editor = TP2SignalEditorCls('testPatternSimple2.xlsx', '1:5');editor.process();
 % editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4');editor.process();
 % editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4', 0.01);editor.process();
+% editor = TP2SignalEditorCls('コメント列違い.xlsx', '1:4', 0.01);editor.process();
     properties
         XlsFile
         SignalRange
@@ -31,10 +32,23 @@ classdef TP2SignalEditorCls
 
             for iSheet=1:numSheets
                 [~,~,iRaw]= xlsread(obj.XlsFile,sheets{iSheet});
-                [~, numCols] = size(iRaw);
-                activeGroupName = cell(1, numCols);
-                activeGroupName{1, str2double(column{1})} = ['<TV>' sheets{iSheet}];
-                raw = vertcat(raw, activeGroupName, iRaw);
+
+% ===== 追加：指定範囲のみ抽出 =====
+% 第二引数で指定した範囲外に自由にメモを記入できるようにするため、
+% 各シートの 使用列数を常にc2-c1+1 列で統一
+c1 = str2double(column{1});
+c2 = str2double(column{2});
+iRaw = iRaw(:, c1:c2);
+numCols = size(iRaw,2);
+activeGroupName = cell(1, numCols);
+activeGroupName{1,1} = ['<TV>' sheets{iSheet}];
+raw = vertcat(raw, activeGroupName, iRaw);
+
+                % [~,~,iRaw]= xlsread(obj.XlsFile,sheets{iSheet});
+                % [~, numCols] = size(iRaw);
+                % activeGroupName = cell(1, numCols);
+                % activeGroupName{1, str2double(column{1})} = ['<TV>' sheets{iSheet}];
+                % raw = vertcat(raw, activeGroupName, iRaw);
             end
 
             inData = raw;
