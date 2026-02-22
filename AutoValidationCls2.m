@@ -1,8 +1,11 @@
 classdef AutoValidationCls2
-% AutoValidationCls2('testPatternSimple3.txt', 1);
-% 第二引数形式
-% net_val
-% net_val2
+% AutoValidationCls2('testPatternSimple3.txt', 0, 0);
+% 第1引数：テストパターンと確認出力信号のリストファイル
+% 第2引数：確認信号の決め方を指定するモード
+% 0:txt に書いた信号だけ比較
+% 1:モデル上でログしている_ideal 信号を比較対象
+% 第3引数：シミュレーション結果のOK/NG判定方法を制御するフラグ。
+%   src列が 'SKIPFLAG' の場合に判定をスキップし '-' を出力するかどうかを制御する。
 % Result_XXXXXX_yyyymmddHHMMSS.xlsx形式
 % シートSummary
 % B8 検証結果
@@ -11,16 +14,18 @@ classdef AutoValidationCls2
 % C12 OK:一致、NG：不一致
     properties
         modelName
+        summaryMode
         signalList
         config
         SKIPFLAG=1e-6
     end
     
     methods
-        function obj = AutoValidationCls2(filename, mode)
+        function obj = AutoValidationCls2(filename, summaryMode, mode)
             clc;
             % コンストラクタの実行時に引数を使って設定する
             obj.modelName = bdroot();
+            obj.summaryMode = summaryMode;
             obj.signalList = obj.readSignalNames(filename);
             % keys(obj.signalList)
             [err, msg] = obj.chkPreReq();
@@ -52,15 +57,23 @@ classdef AutoValidationCls2
         end
 
         %% 
-        function signalList = readSignalNames(~, filename)
+        function signalList = readSignalNames(obj, filename)
             signalList = containers.Map('KeyType','char','ValueType','any');
             fid = fopen(filename);
             tline = fgetl(fid);
             while ischar(tline)
                 parts = strsplit(strtrim(tline), ',');
                 scenario = strtrim(parts{1});
-                signals  = strtrim(parts(2:end));
-                signalList(scenario) = signals;
+if obj.summaryMode == 0
+    % 従来：TC1,o1,o2
+    signals = strtrim(parts(2:end));
+    signalList(scenario) = signals;
+elseif obj.summaryMode == 1
+    % 信号は後でExcelから抽出
+    signalList(scenario) = {};
+end
+                % signals  = strtrim(parts(2:end));
+                % signalList(scenario) = signals;
                 tline = fgetl(fid);
             end
             fclose(fid);
@@ -244,7 +257,22 @@ function [err, msg, ret] = exeSimulation(obj, arg_config)
             try
                 scenarioName = arg_config.signalEditor.scenarioDetails(i).scenarioName;
                 if isKey(obj.signalList, scenarioName)
-                    targetSignals = obj.signalList(scenarioName);
+if obj.summaryMode == 1
+    logs = simout.logsout;
+    n = logs.numElements;
+    targetSignals = {};
+    for i = 1:n
+        sigName = logs.getElement(i).Name;
+        if endsWith(sigName, '_ideal')
+            baseName = erase(sigName, '_ideal');
+            targetSignals{end+1} = baseName;
+        end
+    end
+    targetSignals = unique(targetSignals);
+else
+    targetSignals = obj.signalList(scenarioName);
+end                    
+                    % targetSignals = obj.signalList(scenarioName);
                 else
                     continue  % txtに無いシナリオはスキップ
                 end
@@ -453,12 +481,12 @@ sig_num = length(allSig);
     pos_env_name = 'D9';
     pos_sim_date = 'D10';
 
-    if strcmp(arg_config.mode, 'SB')
-        tp_num = length(arg_config.signalBuilder.testpattern);
-    elseif strcmp(arg_config.mode, 'SE')
+    % if strcmp(arg_config.mode, 'SB')
+    %     tp_num = length(arg_config.signalBuilder.testpattern);
+    % elseif strcmp(arg_config.mode, 'SE')
         tp_num = length(arg_config.validIdx);
-    else
-    end    
+    % else
+    % end    
     % sig_num = length(arg_config.result.sigName{1});
 
     row_s = 13;
