@@ -1,4 +1,24 @@
 classdef TP2SignalEditorCls
+% ① まず MAT ファイルをロード
+% s=load('testPatternSimple3.xlsx.mat')
+% s = 
+%   フィールドをもつ struct:
+%     TC1: [1×1 Simulink.SimulationData.Dataset]
+% ② シナリオ名を確認
+% fieldnames(s)
+% ans =
+%   3×1 の cell 配列
+%     {'TC1'}
+% ③ Dataset を取得
+% ds = s.TC1
+% ds = 
+%                              名前  BlockPath 
+%                              __  _________ 
+%     1  [1x1 timeseries]      i1  ''       
+% ④ 各信号の型を確認
+% class(ds{1}.Data)
+% ans =
+%     'uint8'
 % (使用例)
 % testPatternSimple.xlsxファイルの左端から3列目（Time列含む）までを入力データとしたい場合
 % % TP2SignalEditor クラスをインスタンス化;データを処理
@@ -7,6 +27,7 @@ classdef TP2SignalEditorCls
 % editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4');editor.process();
 % editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4', 0.01);editor.process();
 % editor = TP2SignalEditorCls('コメント列違い.xlsx', '1:4', 0.01);editor.process();
+% editor = TP2SignalEditorCls('testPatternSimple3.xlsx', '1:5');editor.process();
     properties
         XlsFile
         SignalRange
@@ -95,7 +116,13 @@ raw = vertcat(raw, activeGroupName, iRaw);
                         signal = TP2SignalEditorCls.resampleZOH(time, data, obj.Ts);
                     end
                     signal.TimeInfo.Format = '%5.4g';
-                    signal.Name = sigrawdata(p).labels{n};
+                    % signal.Name = sigrawdata(p).labels{n};
+label = sigrawdata(p).labels{n};
+[dataType, cleanName] = TP2SignalEditorCls.parseDataTypeFromHeader(label);
+
+signal.Name = cleanName;
+signal.Data = cast(signal.Data, dataType);
+                    
                     signal.DataInfo.Interpolation = 'zoh';
                     scenario{p} = scenario{p}.addElement(signal);
                 end
@@ -140,6 +167,90 @@ raw = vertcat(raw, activeGroupName, iRaw);
     end
     
     methods (Static)
+function [dataType, cleanName] = parseDataTypeFromHeader(label)
+
+    % デフォルト
+    dataType = 'double';
+    cleanName = label;
+
+    % 文字列でない場合対策
+    if ~ischar(label) && ~isstring(label)
+        return
+    end
+
+    label = char(label);
+
+    % 最低4文字以上必要（g + 2文字 + 名前）
+    if length(label) < 4
+        return
+    end
+
+    % 先頭が g か確認
+    if label(1) ~= 'g'
+        return
+    end
+
+    % 型コード抽出
+    typeCode = label(2:3);
+
+    switch typeCode
+        case 'u8'
+            dataType = 'uint8';
+        case 's8'
+            dataType = 'int8';
+        case 'u1'
+            dataType = 'logical';
+        case 'u16'
+            dataType = 'uint16';
+        case 's16'
+            dataType = 'int16';
+        case 'u32'
+            dataType = 'uint32';
+        case 's32'
+            dataType = 'int32';
+        case 'f3'   % 例: gf3Speed → single
+            dataType = 'single';
+        otherwise
+            return
+    end
+
+    % g + 型コード分を除去
+    % cleanName = label(4:end);
+
+% end
+    % 
+    % dataType = 'double';   % default
+    % cleanName = label;
+    % 
+    % if contains(label, '_')
+    %     parts = strsplit(label, '_');
+    %     prefix = parts{1};
+    % 
+    %     switch prefix
+    %         case 'bool'
+    %             dataType = 'logical';
+    %         case 's8'
+    %             dataType = 'int8';
+    %         case 'u8'
+    %             dataType = 'uint8';
+    %         case 's16'
+    %             dataType = 'int16';
+    %         case 'u16'
+    %             dataType = 'uint16';
+    %         case 's32'
+    %             dataType = 'int32';
+    %         case 'u32'
+    %             dataType = 'uint32';
+    %         case 'f32'
+    %             dataType = 'single';
+    %     end
+    % 
+    %     if ~strcmp(dataType,'double')
+    %         cleanName = strjoin(parts(2:end),'_');
+    %     end
+    % end
+end
+                
         function ts = resampleZOH(time, data, Ts)
             % ZOH リサンプリング（Time重複対応）
             % === ① Time重複除去（最初の出現を採用） ===
