@@ -27,7 +27,7 @@ classdef TP2SignalEditorCls
 % editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4');editor.process();
 % editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4', 0.01);editor.process();
 % editor = TP2SignalEditorCls('コメント列違い.xlsx', '1:4', 0.01);editor.process();
-% editor = TP2SignalEditorCls('testPatternSimple3.xlsx', '1:5');editor.process();
+% editor = TP2SignalEditorCls('testPatternSimple3.xlsx', '1:5',0.01);editor.process();
     properties
         XlsFile
         SignalRange
