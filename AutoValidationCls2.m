@@ -569,7 +569,8 @@ sig_range.Value = summaryCell;
         ok_range_1 = ok_range.Address;
         ok_range_next = '';
         while(~strcmp(ok_range_1, ok_range_next))
-            ok_range.Interior.Color = hex2dec('80FFFF');
+            ok_range.Interior.Color = hex2dec('00FF00');  % —Î
+            % ok_range.Interior.Color = hex2dec('80FFFF');
             ok_range = sig_range.FindNext(ok_range);
             ok_range_next = ok_range.Address;
         end
