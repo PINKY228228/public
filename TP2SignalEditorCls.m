@@ -28,6 +28,7 @@ classdef TP2SignalEditorCls
 % editor = TP2SignalEditorCls('TV2日本語.xlsx', '1:4', 0.01);editor.process();
 % editor = TP2SignalEditorCls('コメント列違い.xlsx', '1:4', 0.01);editor.process();
 % editor = TP2SignalEditorCls('testPatternSimple3.xlsx', '1:5',0.01);editor.process();
+% editor = TP2SignalEditorCls('TC5.xlsx', '1:5',0.01);editor.process();
     properties
         XlsFile
         SignalRange
@@ -53,7 +54,6 @@ classdef TP2SignalEditorCls
 
             for iSheet=1:numSheets
                 [~,~,iRaw]= xlsread(obj.XlsFile,sheets{iSheet});
-
 % ===== 追加：指定範囲のみ抽出 =====
 % 第二引数で指定した範囲外に自由にメモを記入できるようにするため、
 % 各シートの 使用列数を常にc2-c1+1 列で統一
@@ -104,8 +104,8 @@ raw = vertcat(raw, activeGroupName, iRaw);
             scenario{numSheets} = '';
             for p = 1:length(sigrawdata)
                 scenario{p} = Simulink.SimulationData.Dataset;
-                % % 小数点3桁に丸める
-                time = round(sigrawdata(p).data(:,1), 3);
+                % % 小数点2桁に丸める
+                time = round(sigrawdata(p).data(:,1), 2);
                 for n = 2:length(sigrawdata(p).labels)
                     data = sigrawdata(p).data(:,n);
                     if isempty(obj.Ts)
@@ -115,7 +115,8 @@ raw = vertcat(raw, activeGroupName, iRaw);
                         % ZOH 等間隔化
                         signal = TP2SignalEditorCls.resampleZOH(time, data, obj.Ts);
                     end
-                    signal.TimeInfo.Format = '%5.4g';
+                    signal.TimeInfo.Format = '%.2f';% 小数点以下 2桁固定表示
+                    % signal.TimeInfo.Format = '%5.4g';
                     % signal.Name = sigrawdata(p).labels{n};
 label = sigrawdata(p).labels{n};
 [dataType, cleanName] = TP2SignalEditorCls.parseDataTypeFromHeader(label);
@@ -260,7 +261,8 @@ end
             % === ② 等間隔 ZOH ===
             tStart = timeUniq(1);
             tEnd   = timeUniq(end);
-            tNew   = (tStart:Ts:tEnd).';
+            % tNew   = (tStart:Ts:tEnd).';
+            tNew = round((tStart:Ts:tEnd).', 10);
             dataNew = interp1(timeUniq, dataUniq, tNew, 'previous', 'extrap');
 
             ts = timeseries(dataNew, tNew);
