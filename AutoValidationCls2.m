@@ -263,8 +263,8 @@ if obj.summaryMode == 1
     targetSignals = {};
     for i = 1:n
         sigName = logs.getElement(i).Name;
-        if endsWith(sigName, '_ideal')
-            baseName = erase(sigName, '_ideal');
+        if endsWith(sigName, 'ideal')
+            baseName = erase(sigName, 'ideal');
             targetSignals{end+1} = baseName;
         end
     end
@@ -336,7 +336,7 @@ function [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
                 % •K—v‚È‚ç break; ‚µ‚ÄŠO‘¤‚É–ß‚é
                 continue;
                 
-            elseif strcmp(name_j, [signalLists{j} '_ideal'])
+            elseif strcmp(name_j, [signalLists{j} 'ideal'])
                 simout.logsout{jj}.Name;
                 signal_ex_data =  simout.logsout{jj}.Values.Data;
                 continue;
@@ -481,13 +481,7 @@ sig_num = length(allSig);
     pos_env_name = 'D9';
     pos_sim_date = 'D10';
 
-    % if strcmp(arg_config.mode, 'SB')
-    %     tp_num = length(arg_config.signalBuilder.testpattern);
-    % elseif strcmp(arg_config.mode, 'SE')
         tp_num = length(arg_config.validIdx);
-    % else
-    % end    
-    % sig_num = length(arg_config.result.sigName{1});
 
     row_s = 13;
     row_e = row_s + tp_num;
@@ -553,7 +547,12 @@ sig_range.Value = summaryCell;
     tit_range.interior.Color = hex2dec('FFFFC8');
 
     % NG
-    ng_range = sig_range.Find('NG');
+    ng_range = sig_range.Find( ...
+    'NG', ...        % What
+    [], ...          % After
+    [], ...          % LookIn
+    1);              % LookAt = xlWhole
+    % ng_range = sig_range.Find('NG');
     if(~isempty(ng_range))
         ng_range_1 = ng_range.Address;
         ng_range_next = '';
@@ -564,7 +563,12 @@ sig_range.Value = summaryCell;
         end
     end
     % OK
-    ok_range = sig_range.Find('OK');
+    ok_range = sig_range.Find( ...
+    'OK', ...
+    [], ...
+    [], ...
+    1);              % xlWhole
+    % ok_range = sig_range.Find('OK');
     if(~isempty(ok_range))
         ok_range_1 = ok_range.Address;
         ok_range_next = '';
