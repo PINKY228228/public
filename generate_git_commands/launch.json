@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Generate Git Commands",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/gen_git_cmd.py",
+      "console": "integratedTerminal",
+      "args": [
+        "https://github.com/USER/REPO.git",
+        "feature/xyz",
+        "myrepo",
+        "-m",
+        "fix: adjust logic"
+      ]
+    }
+  ]
+}
