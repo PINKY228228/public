@@ -1,0 +1,87 @@
+1. 作業ディレクトリ作成
+
+Cygwinホーム配下にテスト用プロジェクト作成
+
+mkdir ~/test_project
+cd ~/test_project
+
+Windows側実体
+
+C:\cygwin64\home\PC_User\test_project
+2. ディレクトリ構成作成
+mkdir src
+mkdir test
+
+構成
+
+test_project
+ ├ src
+ └ test
+3. テスト対象Cコード作成
+src/add.c
+int add(int a, int b)
+{
+    return a + b;
+}
+src/add.h
+#ifndef ADD_H
+#define ADD_H
+
+int add(int a, int b);
+
+#endif
+4. GoogleTestコード作成
+test/test_add.cpp
+#include <gtest/gtest.h>
+
+extern "C" {
+#include "../src/add.h"
+}
+
+TEST(AddTest, Basic)
+{
+    EXPECT_EQ(3, add(1,2));
+}
+
+※
+extern "C" により C関数をC++テストからリンク可能にする
+
+5. Cソースコンパイル
+
+C言語ソースを gcc でオブジェクト化
+
+gcc -c src/add.c
+
+生成物
+
+add.o
+6. テストコードコンパイル・リンク
+
+GoogleTestライブラリとリンク
+
+g++ test/test_add.cpp add.o \
+-I ~/googletest/googletest/include \
+-L ~/googletest/build/lib \
+-lgtest -lgtest_main -pthread
+
+生成物
+
+a.exe
+7. テスト実行
+./a.exe
+
+実行結果
+
+[==========] Running 1 test from 1 test suite.
+[ RUN      ] AddTest.Basic
+[       OK ] AddTest.Basic
+[  PASSED  ] 1 test.
+最終ディレクトリ構成
+test_project
+ ├ src
+ │   ├ add.c
+ │   └ add.h
+ ├ test
+ │   └ test_add.cpp
+ ├ add.o
+ └ a.exe
