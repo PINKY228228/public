@@ -11,14 +11,22 @@ set -ex
 echo "start test"
 
 rm -rf build
-mkdir build
-cd build
+#mkdir build
 
 echo "configure"
-cmake ..
+# echo "configure (Debug)"
+# VSCode拡張を入れる
+# ms-vscode.cpptools
+# setup-x86_64.exeでgdbインストール
+# -S .        → source (CMakeLists.txt の場所)
+# -B build    → buildディレクトリ
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+#cmake ..
 
 echo "build"
-make -j$(nproc)
+cmake --build build
+#make -j$(nproc)
+cd build
 
 echo "run test"
 ctest --output-on-failure
