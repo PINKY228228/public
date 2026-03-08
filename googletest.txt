@@ -1,3 +1,56 @@
+project
+│
+├ src
+│   ├ add.c
+│   └ add.h
+│
+├ include
+│
+├ data
+│  └ add.csv
+│  └ normal.csv
+├ tests
+│   ├ unit
+│   │   └ test_add.cpp
+│   │
+│   ├ csv
+│       ├ test_add_csv.cpp
+│   │  ├ test_normal_csv.cpp
+│   │  ├ csv_loader.cpp
+│   │  ├ csv_loader.h
+│   │
+│   ├ integration
+│   │   └ test_system.cpp
+│   │
+│   └ fuzz
+│       └ fuzz_add.cpp
+│
+├ third_party
+│   └ googletest
+│
+├ CMakeLists.txt
+├ run_tests.sh
+└ .github/workflows/test.yml
+@@@@@
+CSV → GoogleTest Parameterized Test → 自動テスト
+VSCodeで test_project を開いた状態で
+Terminal → New Terminal
+./run_test.sh
+
+test_project2
+├ src
+│   add.c
+├ test
+│   test_add_csv.cpp
+├ data
+├ googletest
+│   ├ googletest
+│   └ googlemock
+├ CMakeLists.txt
+└ run_test.sh
+
+
+@@@@@
 1. 作業ディレクトリ作成
 
 Cygwinホーム配下にテスト用プロジェクト作成
