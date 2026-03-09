@@ -21,5 +21,5 @@ TEST_P(NormalCSVTest, Add)
 INSTANTIATE_TEST_SUITE_P(
     NormalCSVTests,
     NormalCSVTest,
-    ::testing::ValuesIn(loadCSV("data/normal.csv"))
+    ::testing::ValuesIn(loadCSV(std::string(TEST_DATA_DIR) + "/normal.csv"))
 );
