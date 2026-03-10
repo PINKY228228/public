@@ -3,8 +3,11 @@ set -e
 
 MODE=$1
 
+# ./run_test.sh csv
 # 実際のテスト数を見る方法
 # ./build/tests/csv/csvTests.exe
+# ./build/tests/unit/unitTests.exe
+
 case "$MODE" in
     csv)
         ./tests/csv/run_csv_test.sh
