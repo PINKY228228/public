@@ -16,24 +16,38 @@ case "$MODE" in
         ./tests/unit/run_unit_test.sh
         ;;
     coverage)
-        echo "=== run all tests for coverage ==="
+    echo "=== clean build ==="
 
-        ./tests/unit/run_unit_test.sh
-        ./tests/csv/run_csv_test.sh
+    rm -rf build
 
-        echo "=== generate coverage ==="
+    echo "=== configure coverage build ==="
 
-        lcov --capture --directory . --output-file coverage.info
-        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+    cmake -S . -B build -DENABLE_COVERAGE=ON
 
-        genhtml coverage.info --output-directory coverage_html
+    echo "=== build ==="
 
-        echo ""
-        echo "coverage html:"
-        echo "coverage_html/index.html"
-        ;;
-    *)
-        ./tests/unit/run_unit_test.sh
-        ./tests/csv/run_csv_test.sh
-        ;;
+    cmake --build build
+
+    echo "=== run tests ==="
+
+    cd build
+    ctest --output-on-failure
+    cd ..
+
+    echo "=== generate coverage ==="
+lcov --capture --directory build \
+--ignore-errors inconsistent \
+--output-file coverage.info
+    lcov --remove coverage.info \
+'/usr/*' \
+'*/tests/*' \
+'*/third_party/*' \
+--output-file coverage.info
+
+    genhtml coverage.info --output-directory coverage_html
+
+    echo ""
+    echo "coverage html:"
+    echo "coverage_html/index.html"
+    ;;
 esac
