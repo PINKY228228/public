@@ -10,4 +10,4 @@ cmake --build "$BUILD_DIR"
 cd "$BUILD_DIR"
 # ctest:CMakeプロジェクトに登録された テストを実行するツール
 #-R unitTests:テスト名が unitTests にマッチするものだけ実行
-ctest -R unitTests --output-on-failure
+ctest -R unitTests --output-on-failure -V
