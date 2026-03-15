@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
-
+#include "csv_loader.h"
 extern "C" {
 #include "Rte_mock.h"
 #include "../../src/add.h"
 #include "ControlLamp.h"
 }
+
 /*
 TEST
  ↓
@@ -22,12 +23,47 @@ mock保存
  ↓
 EXPECT_TRUE
 */
-TEST(LampTest, TurnOn)
+
+TEST(RTEWriteTest, Rte_Write_VehicleSpeed_Value)
 {
-    RteMock_SetVehicleSpeed(120);
+    uint16_t mockvalue=150;
+    App_VehicleSpeedProvider(mockvalue);
+    EXPECT_EQ(gu16_vehicleSpeed, mockvalue);
+}
+
+TEST(RTEWriteTest, TurnOn)
+{
+    uint16_t mockvalue=120;
+    RteMock_SetVehicleSpeed(mockvalue);
     App_ControlLamp();
     EXPECT_FALSE(RteMock_GetVehicleLamp());
-    /*EXPECT_EQ(RteMock_GetVehicleLamp(), true);*/
+}
+
+TEST(RTEread, LampTable)
+{
+/*
+CSVテストは「入出力の組み合わせ確認」に向いている
+典型例：テーブルテスト
+CSV
+ ↓
+RTE入力に設定
+ ↓
+App実行
+ ↓
+RTE出力確認
+*/
+    auto rows = loadCSV("tests/csv/table_test.csv");
+
+    /* 失敗行をわかるようにする */
+for (const auto& r : rows)
+{
+    SCOPED_TRACE("speed=" + std::to_string(r.a));
+
+    gu16_vehicleSpeed = r.a;
+    App_ControlLamp();
+
+    EXPECT_EQ(RteMock_GetVehicleLamp(), r.expected);
+}    
 }
 
 /*
@@ -43,6 +79,7 @@ speed = vehicleSpeed
  ↓
 EXPECT_EQ(speed,120)
 */
+
 TEST(VehicleSpeedTest, HighSpeed)
 {
     RteMock_SetVehicleSpeed(120);
