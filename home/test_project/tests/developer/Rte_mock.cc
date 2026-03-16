@@ -14,15 +14,14 @@ extern "C" void RteMock_SetVehicleSpeed(uint16_t v);
 }
 
 /* ---- 内部モックデータ ---- */
-
 static uint16_t mock_vehicleSpeed = 0;
 static bool lamp_value;
 
 /* ---- RTE API モック ---- */
 extern "C" Std_ReturnType Rte_Read_VehicleSpeed_Value(uint16_t* speed)
 {
-    *speed = gu16_vehicleSpeed;
-    //*speed = mock_vehicleSpeed;
+    //*speed = gu16_vehicleSpeed;
+    *speed = mock_vehicleSpeed;
     return RTE_E_OK;
 }
 
