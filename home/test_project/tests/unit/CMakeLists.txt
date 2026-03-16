@@ -19,5 +19,9 @@ target_include_directories(unitTests
     ${PROJECT_SOURCE_DIR}/tests/developer
 )
 
+target_compile_definitions(unitTests
+    PRIVATE CSV_PATH="${PROJECT_SOURCE_DIR}/tests/csv/"
+)
+
 # unitTestsがテスト名
 add_test(NAME unitTests COMMAND unitTests)

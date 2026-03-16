@@ -39,7 +39,7 @@ TEST(RTEWriteTest, TurnOn)
     EXPECT_FALSE(RteMock_GetVehicleLamp());
 }
 
-TEST(RTEread, LampTable)
+TEST(RTEread, Rte_Read_VehicleSpeed_Value)
 {
 /*
 CSVテストは「入出力の組み合わせ確認」に向いている
@@ -52,17 +52,17 @@ App実行
  ↓
 RTE出力確認
 */
-    auto rows = loadCSV("tests/csv/table_test.csv");
-
-    /* 失敗行をわかるようにする */
+    auto rows = loadCSV(std::string(CSV_PATH) + "table_test.csv");
+ 
 for (const auto& r : rows)
 {
+    /* 失敗行をわかるようにする */
     SCOPED_TRACE("speed=" + std::to_string(r.a));
-
-    gu16_vehicleSpeed = r.a;
-    App_ControlLamp();
-
-    EXPECT_EQ(RteMock_GetVehicleLamp(), r.expected);
+    /* モック入力を設定 */
+    RteMock_SetVehicleSpeed(r.a);
+    App_init();
+/* EXPECT_EQ(期待値, 実際の値); */
+    EXPECT_EQ(r.a, gu16_vehicleSpeed);
 }    
 }
 
