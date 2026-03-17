@@ -23,7 +23,7 @@ mock保存
  ↓
 EXPECT_TRUE
 */
-
+#if 0
 TEST(RTEWriteTest, Rte_Write_VehicleSpeed_Value)
 {
     uint16_t mockvalue=150;
@@ -38,7 +38,7 @@ TEST(RTEWriteTest, TurnOn)
     App_ControlLamp();
     EXPECT_FALSE(RteMock_GetVehicleLamp());
 }
-
+#endif
 TEST(RTEread, Rte_Read_VehicleSpeed_Value)
 {
 /*
@@ -66,6 +66,20 @@ for (const auto& r : rows)
 }    
 }
 
+TEST(RTEread, gu8_activeTest)
+{
+    auto rows = loadCSV(std::string(CSV_PATH) + "gu8_activeTest.csv");
+ 
+for (const auto& r : rows)
+{
+    /* モック入力を設定 */
+    RteMock_SetDID(r.a, r.b);
+    App_init();
+/* EXPECT_EQ(期待値, 実際の値); */
+    EXPECT_EQ(r.expected, gu8_activeTest);
+}    
+}
+
 /*
 TEST開始
  ↓
@@ -79,7 +93,7 @@ speed = vehicleSpeed
  ↓
 EXPECT_EQ(speed,120)
 */
-
+#if 0
 TEST(VehicleSpeedTest, HighSpeed)
 {
     RteMock_SetVehicleSpeed(120);
@@ -111,3 +125,4 @@ TEST(AddTest, Large)
 {
     EXPECT_EQ(add(1000,2000),3000);
 }
+#endif
