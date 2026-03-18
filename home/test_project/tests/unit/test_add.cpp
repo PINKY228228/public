@@ -66,6 +66,28 @@ for (const auto& r : rows)
 }    
 }
 
+TEST(RTEread, Rte_Read_1)
+{
+    auto rows = loadCSV(std::string(CSV_PATH) + "gu16_1.csv");
+ 
+    for (const auto& r : rows)
+    {
+    /* 失敗行をわかるようにする */
+        //SCOPED_TRACE("speed=" + std::to_string(r.a));
+    /* モック入力を設定 */
+        /*「mock変数を関数ごとに持つ設計」をやめる*/
+        RteMock_Set("Rte_Read_1", r.gu16_1_in);
+        RteMock_Set("Rte_Read_2", r.gu16_2_in);
+        //RteMock_SetU16Read(r.gu16_1_in);
+        //RteMock_SetU16Read(r.gu16_2_in);
+
+        App_init();
+/* EXPECT_EQ(期待値, 実際の値); */
+        EXPECT_EQ(r.gu16_1_in, gu16_1);
+        EXPECT_EQ(r.gu16_2_in, gu16_2);
+    }    
+}
+
 TEST(RTEread, gu8_activeTest)
 {
     auto rows = loadCSV(std::string(CSV_PATH) + "gu8_activeTest.csv");
