@@ -15,6 +15,8 @@ struct TestData
 {
     int a;
     int b;
+    uint16_t gu16_1_in;
+    uint16_t gu16_2_in;
     int expected;
 };
 
