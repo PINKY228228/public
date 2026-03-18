@@ -23,11 +23,15 @@ bool RteMock_GetVehicleLamp(void);
 Std_ReturnType Rte_Read_Speed(uint16_t* speed);
 Std_ReturnType Rte_Write_Torque(uint16_t torque);
 Std_ReturnType Rte_Read_VehicleSpeed_Value(uint16_t* speed);
+Std_ReturnType Rte_Read_1(uint16_t* v);
+Std_ReturnType Rte_Read_2(uint16_t* v);
 Std_ReturnType Rte_Read_DID2800(uint8_t* v);
 Std_ReturnType Rte_Read_DID2801(uint8_t* v);
 
 void Rte_Write_VehicleSpeed_Value(uint16_t v);
 void RteMock_SetVehicleSpeed(uint16_t v);
+void RteMock_Set(const char* name, uint16_t val);
+void RteMock_SetU16Read(uint16_t v0);
 void RteMock_SetDID(uint8_t v0, uint8_t v1);
 
 #ifdef __cplusplus
