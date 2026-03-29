@@ -32,6 +32,7 @@ void Rte_Write_VehicleSpeed_Value(uint16_t v);
 void RteMock_SetVehicleSpeed(uint16_t v);
 void RteMock_Set(const char* name, uint16_t val);
 void RteMock_SetU16Read(uint16_t v0);
+void RteMock_SetU8Read(uint8_t v0);
 void RteMock_SetDID(uint8_t v0, uint8_t v1);
 
 #ifdef __cplusplus

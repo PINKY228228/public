@@ -114,6 +114,7 @@ extern "C" void RteMock_SetU16Read(uint16_t v0)
     mock_R1 = v0;
 }  
 
+
 void RteMock_SetDID(uint8_t v0, uint8_t v1)
 {
     mock.did2800 = v0;
