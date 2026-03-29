@@ -1,1 +1,18 @@
-
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug unitTests",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "C:/cygwin64/home/PC_User/test_project_excall/build/unitTests.exe",
+      "args": ["--gtest_filter=CompMainTest.*"],
+      "cwd": "C:/cygwin64/home/PC_User/test_project_excall/build",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/cygwin64/bin/gdb.exe",
+      "stopAtEntry": false,
+      "externalConsole": true
+      "preLaunchTask": "build"
+    }
+  ]
+}
