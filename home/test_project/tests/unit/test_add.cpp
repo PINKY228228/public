@@ -23,7 +23,7 @@ mock保存
  ↓
 EXPECT_TRUE
 */
-#if 0
+#if 1
 TEST(RTEWriteTest, Rte_Write_VehicleSpeed_Value)
 {
     uint16_t mockvalue=150;
@@ -88,6 +88,27 @@ TEST(RTEread, Rte_Read_1)
     }    
 }
 
+TEST(RTEread, abstruct)
+{
+    auto rows = loadCSV2(std::string(CSV_PATH) + "abstruct.csv");
+ 
+    for (const auto& r : rows)
+    {
+    /* 失敗行をわかるようにする */
+        //SCOPED_TRACE("speed=" + std::to_string(r.a));
+    /* モック入力を設定 */
+        //RteMock_Set("Rte_Read_1", r.gu16_1_in);
+        gu8_i1 = r.gu8_i1_in;
+        gu8_i2 = r.gu8_i2_in;
+        gu8_i3 = r.gu8_i3_in;
+        gu8_i4 = r.gu8_i4_in;
+        gu8_i5 = r.gu8_i5_in;
+        App_init();
+/* EXPECT_EQ(期待値, 実際の値); */
+        EXPECT_EQ(r.gu8_o1_ideal, gu8_o1);
+    }    
+}
+
 TEST(RTEread, gu8_activeTest)
 {
     auto rows = loadCSV(std::string(CSV_PATH) + "gu8_activeTest.csv");
@@ -115,7 +136,7 @@ speed = vehicleSpeed
  ↓
 EXPECT_EQ(speed,120)
 */
-#if 0
+#if 1
 TEST(VehicleSpeedTest, HighSpeed)
 {
     RteMock_SetVehicleSpeed(120);

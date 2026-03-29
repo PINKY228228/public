@@ -1,22 +1,25 @@
-#     ../csv/csv_loader.cpp
+# “純粋な単体テスト専用”
 add_executable(unitTests
     test_add.cpp
     ../csv/csv_loader.cpp
-    FlashTest.cpp
-    ../developer/MockIO.cc      # ★ここに入れる
-    ../developer/FakeMicroTime.cc    
+    test_comp_main.cpp
+    ../developer/mock_comp.cc   #←これ追加
+    ../../src/comp_main.c
+    #FlashTest.cpp
+#    ../developer/MockIO.cc      # ★ここに入れる
+ ../developer/FakeMicroTime.cc
+ ../developer/MockIO.cc
+    LegacyFlashTest.cpp
+    #$<TARGET_OBJECTS:dev_mocks>
 )
 
 # Rte_mock.cc → ライブラリ dev_mocks を作る
 # 自前mainをccで作成しない
 target_link_libraries(unitTests
-    my_lib        # ★先（要求側）
-    dev_mocks     # ★後（提供側）
-    # gtest
-    # gtest_main
-    # gmockを使い、シーケンステストをしたいため
-    gmock
-    gmock_main    
+    dev_mocks    
+    my_lib
+    gtest
+    pthread
 )
 
 # unitTests に include path を追加
@@ -24,6 +27,8 @@ target_include_directories(unitTests
     PRIVATE
     ${PROJECT_SOURCE_DIR}/tests/csv
     ${PROJECT_SOURCE_DIR}/tests/developer
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src/IO
 )
 
 target_compile_definitions(unitTests
@@ -36,7 +41,10 @@ target_compile_definitions(unitTests
 #add_test(NAME unitTests COMMAND unitTests)
 add_test(NAME unitTests
     # フィルタ
-    COMMAND unitTests --gtest_filter=FlashDriverTest.*
-    #COMMAND unitTests --gtest_filter=RTEread.*
+    COMMAND unitTests --gtest_filter=LegacyFlash.*
+    #COMMAND unitTests --gtest_filter=CompMainTest.*
+    #COMMAND unitTests --gtest_filter=FlashDriverTest.*
+    # COMMAND unitTests --gtest_filter=RTEread.*
     # COMMAND unitTests --gtest_filter=VehicleSpeedTest.*
+    #COMMAND unitTests --gtest_filter=RTEread.abstruct
 )
