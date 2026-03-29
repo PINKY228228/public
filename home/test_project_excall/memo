@@ -1,0 +1,41 @@
+
+
+rm -rf build
+cmake -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+
+./build/unittest.exe
+
+#rm -rf build
+#cmake -B build
+#cmake --build build
+
+CMakeLists
+set(CMAKE_C_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+
+■cygwinをVSCで
+PS C:\cygwin64\home\PC_User> C:\cygwin64\bin\bash.exe --login -i
+PC_User@DESKTOP-1OPBE7G ~
+$ which rm
+/usr/bin/rm
+
+PC_User@DESKTOP-1OPBE7G ~
+$ cygcheck -c | grep -E "gcc-core|gcc-g\+\+|make|autoconf|automake|libtool"
+autoconf                               15-3                     OK
+autoconf2.1                            2.13-12                  OK
+autoconf2.5                            2.69-5                   OK
+autoconf2.7                            2.73-1                   OK
+automake                               11-1                     OK
+automake1.11                           1.11.6-4                 OK
+automake1.12                           1.12.6-4                 OK
+automake1.13                           1.13.4-3                 OK
+automake1.14                           1.14.1-4                 OK
+automake1.15                           1.15.1-3                 OK
+automake1.16                           1.16.5-2                 OK
+automake1.18                           1.18.1-1                 OK
+cmake                                  4.2.1-1                  OK
+gcc-core                               13.4.0-1                 OK
+gcc-g++                                13.4.0-1                 OK
+libtool                                2.4.7-1                  OK
+make                                   4.4.1-2                  OK
