@@ -1,3 +1,119 @@
+test_project3/
+ ├─ third_party/
+ │   └─ googletest/
+ │       ├─ googletest/
+ │       └─ googlemock/
+ ├─ src/
+ │   └─ CMakeLists.txt
+ │   └─ comp_main.c
+ ├─ tests/
+ │   └─ CMakeLists.txt
+ │   └─ developer/
+ │       ├─ CMakeLists.txt
+ │       ├─ mock_comp.cpp
+ │       └─ test_comp_main.cpp
+ │   └─ unit/
+ │       ├─ CMakeLists.txt
+ │       ├─ test_comp_main.cpp
+
+＠＠＠＠＠
+VSCode + CMake + gtest デバッグ備忘録
+GoogleTestのテストコード（例：TEST(...)）で
+ブレークポイントを確実に止める
+準備
+PC_User@DESKTOP-1OPBE7G ~/test_project_excall
+$ code --list-extensions --show-versions
+ms-ceintl.vscode-language-pack-ja@1.110.2026032711
+ms-python.debugpy@2025.18.0
+ms-python.python@2026.4.0
+ms-python.vscode-pylance@2026.1.1
+ms-python.vscode-python-envs@1.24.0
+ms-vscode.cpptools@1.31.3
+
+
+① Debugビルドにする
+run.sh
+#!/bin/bash
+set -e
+ROOT=$(pwd)
+BUILD_DIR=$ROOT/build
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
+cmake -DCMAKE_BUILD_TYPE=Debug ..
+cmake --build .
+./unitTests --gtest_filter=CompMainTest.*
+ ポイント
+-DCMAKE_BUILD_TYPE=Debug が必須
+これで内部的になる
+-O0 -g
+⇒最適化OFF＋デバッグ情報あり
+
+② VSCodeでデバッグ実行（これが本質）
+.vscode/launch.json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug unitTests",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "C:/cygwin64/home/PC_User/test_project_excall/build/unitTests.exe",
+      "args": ["--gtest_filter=CompMainTest.*"],
+      "cwd": "C:/cygwin64/home/PC_User/test_project_excall/build",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/cygwin64/bin/gdb.exe",
+      "stopAtEntry": false,
+      "externalConsole": true
+    }
+  ]
+}
+ポイント
+run.shではなく VSCodeのF5で起動
+miDebuggerPath は Cygwin の gdb
+program は exeの実パス
+
+③ ブレークポイントが効く条件
+これ3つ揃わないと止まらない
+条件	内容
+① Debugビルド	-g
+② 最適化OFF	-O0
+③ 正しいexe	VSCodeが正しいバイナリを起動
+
+④ よくあるハマり
+❌ run.shから実行
+→ デバッガ未接続 → 止まらない
+❌ gdbパスミス
+"miDebuggerPath": "C:/cygwin64/bin/gdb.exe"
+❌ exeパス違い
+"program": ".../build/unitTests.exe"
+実際の場所と一致させる
+❌ buildキャッシュ
+rm -rf build
+
+VSCodeがgdb付きで unitTests.exe を起動した
+つまり：
+F5     → ✅ デバッグ実行
+＠＠＠＠＠
+
+■cygwinをVSCで
+PS C:\cygwin64\home\PC_User> C:\cygwin64\bin\bash.exe --login -i
+
+PC_User@DESKTOP-1OPBE7G ~
+$ which rm
+/usr/bin/rm
+
+PC_User@DESKTOP-1OPBE7G ~
+$ cd ~/test_project_excall
+./run.sh
+
+■なぜシートBだと、ステップ状となる？簡潔な回答。
+同じ time に異なる値が連続しているから。
+同一timeの複数値は“瞬時ジャンプ”扱いのため。
+Excelは「上から順に点を線で結ぶ」ので：
+(1,0) → (1,1)
+横に進まず縦にジャンプ＝ステップ（段差）に見える。
+
 project
 │
 ├ src
