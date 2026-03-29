@@ -24,14 +24,24 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
+
+#ifndef D_Flash_H
+#define D_Flash_H
+
 #include "IO.h"
-void IO_Write(ioAddress addr, ioData data)
+
+void Flash_Create(void);
+void Flash_Destroy(void);
+int Flash_Write(ioAddress offset, ioData data);
+
+typedef enum
 {
-    ioData * p = 0;
-    *(p + addr) = data;
-}
-ioData IO_Read(ioAddress addr)
-{
-    ioData * p = 0;
-    return *(p + addr);
-}
+	FLASH_SUCCESS = 0,
+	FLASH_VPP_ERROR,
+	FLASH_PROGRAM_ERROR,
+	FLASH_PROTECTED_BLOCK_ERROR,
+	FLASH_UNKNOWN_PROGRAM_ERROR,
+	FLASH_READ_BACK_ERROR,
+	FLASH_TIMEOUT_ERROR
+} FlashStatus;
+#endif  /* D_Flash_H */

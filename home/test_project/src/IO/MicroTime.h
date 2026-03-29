@@ -24,14 +24,17 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
-#include "IO.h"
-void IO_Write(ioAddress addr, ioData data)
-{
-    ioData * p = 0;
-    *(p + addr) = data;
+#ifndef D_MicroTime_H
+#define D_MicroTime_H
+
+#include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+uint32_t MicroTime_Get(void);
+void MicroTime_Delay(uint32_t);
+#ifdef __cplusplus
 }
-ioData IO_Read(ioAddress addr)
-{
-    ioData * p = 0;
-    return *(p + addr);
-}
+#endif
+
+#endif  /* D_MicroTime_H */

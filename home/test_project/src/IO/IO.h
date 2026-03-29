@@ -24,14 +24,21 @@
 /*-    www.renaissancesoftware.net james@renaissancesoftware.net       -*/
 /*- ------------------------------------------------------------------ -*/
 
-#include "IO.h"
-void IO_Write(ioAddress addr, ioData data)
-{
-    ioData * p = 0;
-    *(p + addr) = data;
+
+
+#ifndef D_IO_H
+#define D_IO_H
+#include <stdint.h>
+
+typedef uint32_t ioAddress;
+typedef uint16_t ioData;
+#ifdef __cplusplus
+extern "C" {
+#endif
+ioData IO_Read(ioAddress offset);
+void  IO_Write(ioAddress offset, ioData data);
+#ifdef __cplusplus
 }
-ioData IO_Read(ioAddress addr)
-{
-    ioData * p = 0;
-    return *(p + addr);
-}
+#endif
+#endif
+
