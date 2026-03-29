@@ -19,7 +19,12 @@ set(CMAKE_CXX_STANDARD 17)
 # set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_C_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+
 enable_testing()
 
 add_subdirectory(src)
 add_subdirectory(tests)
+# googletest追加
+add_subdirectory(third_party/googletest)

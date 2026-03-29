@@ -13,6 +13,12 @@ case "$MODE" in
         ./tests/csv/run_csv_test.sh
         ;;
     unit)
+        # ./run_test.sh unit
+# ■cygwinをVSCで
+# PS C:\cygwin64\home\PC_User> C:\cygwin64\bin\bash.exe --login -i
+# PC_User@DESKTOP-1OPBE7G ~
+# $ which rm
+# /usr/bin/rm
         ./tests/unit/run_unit_test.sh
         ;;
     coverage)
@@ -36,15 +42,24 @@ case "$MODE" in
 
     echo "=== generate coverage ==="
 lcov --capture --directory build \
---ignore-errors inconsistent \
+--ignore-errors inconsistent,mismatch \
+--rc lcov_branch_coverage=1 \
 --output-file coverage.info
+
+#lcov --capture --directory build \
+#--ignore-errors inconsistent \
+#--output-file coverage.info
     lcov --remove coverage.info \
 '/usr/*' \
 '*/tests/*' \
 '*/third_party/*' \
 --output-file coverage.info
 
-    genhtml coverage.info --output-directory coverage_html
+genhtml coverage.info \
+--output-directory coverage_html \
+--rc lcov_branch_coverage=1
+
+    #genhtml coverage.info --output-directory coverage_html
 
     echo ""
     echo "coverage html:"
