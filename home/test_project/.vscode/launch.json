@@ -1,15 +1,17 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Debug csvTests",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/csvTests.exe",
-            "cwd": "${workspaceFolder}",
-            "stopAtEntry": false,
-            "MIMode": "gdb",
-            "miDebuggerPath": "C:/cygwin64/bin/gdb.exe"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug unitTests",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "C:/cygwin64/home/PC_User/test_project3/build/tests/unit/unitTests.exe",
+      "args": [],
+      "cwd": "C:/cygwin64/home/PC_User/test_project3/build",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/cygwin64/bin/gdb.exe",
+      "stopAtEntry": false,
+      "externalConsole": true
+    }
+  ]
 }
