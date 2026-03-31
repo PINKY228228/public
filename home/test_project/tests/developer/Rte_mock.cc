@@ -8,6 +8,8 @@
 #include <map>
 #include <string>
 static std::map<std::string, uint16_t> mock_map;
+//型バラバラでも1つで管理できるよう、「名前 → 値」を保存する箱（辞書）を設ける
+std::map<std::string, std::any> write_map;
 
 extern "C" {
 
@@ -15,7 +17,7 @@ extern "C" {
 //#define RTE_E_OK 0
 //Std_ReturnType Rte_Read_VehicleSpeed_Value(uint16_t* speed);
 
-extern "C" void RteMock_SetVehicleSpeed(uint16_t v);
+//extern "C" void RteMock_SetVehicleSpeed(uint16_t v);
 
 }
 
@@ -79,15 +81,19 @@ extern "C" Std_ReturnType Rte_Read_DID2801(uint8_t* v)
 }
 
 /* ---- モック制御API ---- */
-extern "C" void Rte_Write_VehicleSpeed_Value(uint16_t v)
+extern "C" Std_ReturnType Rte_Write_VehicleSpeed_Value(uint16_t v)
 {
-    gu16_vehicleSpeed = v;
+    std::cout << "mock:Rte_Write_VehicleSpeed_Value called: " << v << std::endl;
+    //gu16_vehicleSpeed = v;
+    write_map["Rte_Write_VehicleSpeed_Value"] = v;
+    return RTE_E_OK;
 }
 
 extern "C" Std_ReturnType Rte_Write_VehicleLamp_Value(bool v)
 {
-    std::cout << "Rte_Write called: " << v << std::endl;
-    lamp_value = v;
+    std::cout << "mock:Rte_Write_VehicleLamp_Value called: " << v << std::endl;
+    //lamp_value = v;
+    write_map["Rte_Write_VehicleLamp_Value"] = v;
     return RTE_E_OK;
 }
 

@@ -1,8 +1,12 @@
-#ifndef RTE_MOCK_H
-#define RTE_MOCK_H
+//#ifndef RTE_MOCK_H
+//#define RTE_MOCK_H
+#pragma once
+#include <any>
+#include <map>
+#include <string>
+extern std::map<std::string, std::any> write_map;
 
 #include <stdint.h>
-
 
 /* mock変数 */
 extern uint16_t mock_speed;
@@ -28,7 +32,7 @@ Std_ReturnType Rte_Read_2(uint16_t* v);
 Std_ReturnType Rte_Read_DID2800(uint8_t* v);
 Std_ReturnType Rte_Read_DID2801(uint8_t* v);
 
-void Rte_Write_VehicleSpeed_Value(uint16_t v);
+Std_ReturnType Rte_Write_VehicleSpeed_Value(uint16_t v);
 void RteMock_SetVehicleSpeed(uint16_t v);
 void RteMock_Set(const char* name, uint16_t val);
 void RteMock_SetU16Read(uint16_t v0);
@@ -39,4 +43,4 @@ void RteMock_SetDID(uint8_t v0, uint8_t v1);
 }
 #endif
 
-#endif
+//#endif
