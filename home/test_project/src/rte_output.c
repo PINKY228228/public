@@ -1,15 +1,15 @@
 #include "ControlLamp.h"
 
-void App_VehicleSpeedProvider(uint16_t speed)
+void App_VehicleSpeedProvider(void)
 {
-    Rte_Write_VehicleSpeed_Value(speed);
+    Rte_Write_VehicleSpeed_Value(gu16_vehicleSpeed);
 }
  
 void App_ControlLamp(void)
 {
-    unsigned int speed;
+    Rte_Write_VehicleSpeed_Value(gu16_vehicleSpeed);
 
-if(speed > 100)
+if(gu16_vehicleSpeed > 100)
 {
     Rte_Write_VehicleLamp_Value(TRUE);
 }
@@ -17,5 +17,5 @@ else
 {
     Rte_Write_VehicleLamp_Value(FALSE);
 }
-    printf("speed=%d\n", speed);
+    printf("app:speed=%d\n", gu16_vehicleSpeed);
 }

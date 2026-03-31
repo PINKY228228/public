@@ -15,6 +15,6 @@ void App_init(void);
 void App_ControlLamp(void);
 
 void App_ControlLamp(void);
-void App_VehicleSpeedProvider(uint16_t speed);
+void App_VehicleSpeedProvider(void);
 #define TRUE 0
 #define FALSE ~TRUE
