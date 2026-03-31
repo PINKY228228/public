@@ -6,6 +6,13 @@ extern "C" {
 #include "ControlLamp.h"
 }
 
+//同じ処理を型ごとに書かなくて済むよう、
+//型をあとから決められる関数（またはクラス）の定義をする
+template<typename T>
+T RteMock_GetWrite(const char* name)
+{
+    return std::any_cast<T>(write_map.at(name));
+}
 /*
 TEST
  ↓
@@ -23,22 +30,20 @@ mock保存
  ↓
 EXPECT_TRUE
 */
-#if 1
-TEST(RTEWriteTest, Rte_Write_VehicleSpeed_Value)
+TEST(RTEWrite, Rte_Write_VehicleSpeed_Value)
 {
-    uint16_t mockvalue=150;
-    App_VehicleSpeedProvider(mockvalue);
-    EXPECT_EQ(gu16_vehicleSpeed, mockvalue);
+    gu16_vehicleSpeed =150;
+    App_VehicleSpeedProvider();
+    EXPECT_EQ(RteMock_GetWrite<uint16_t>("Rte_Write_VehicleSpeed_Value"), gu16_vehicleSpeed);
 }
 
-TEST(RTEWriteTest, TurnOn)
+TEST(RTEWrite, TurnOn)
 {
     uint16_t mockvalue=120;
-    RteMock_SetVehicleSpeed(mockvalue);
     App_ControlLamp();
-    EXPECT_FALSE(RteMock_GetVehicleLamp());
+    EXPECT_EQ(RteMock_GetWrite<bool>("Rte_Write_VehicleLamp_Value"), TRUE);
 }
-#endif
+
 TEST(RTEread, Rte_Read_VehicleSpeed_Value)
 {
 /*

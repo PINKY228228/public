@@ -41,9 +41,10 @@ target_compile_definitions(unitTests
 #add_test(NAME unitTests COMMAND unitTests)
 add_test(NAME unitTests
     # フィルタ
-    COMMAND unitTests --gtest_filter=LegacyFlash.*
+    #COMMAND unitTests --gtest_filter=LegacyFlash.*
     #COMMAND unitTests --gtest_filter=CompMainTest.*
     #COMMAND unitTests --gtest_filter=FlashDriverTest.*
+     COMMAND unitTests --gtest_filter=RTEWrite.*
     # COMMAND unitTests --gtest_filter=RTEread.*
     # COMMAND unitTests --gtest_filter=VehicleSpeedTest.*
     #COMMAND unitTests --gtest_filter=RTEread.abstruct
