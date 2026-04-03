@@ -1,3 +1,27 @@
+テストをまとめたらリンクエラー
+現象
+comp_mainテスト単体 → OK
+rteテスト単体 → OK
+まとめる → NG
+原因
+モックと実体が混在
+解決
+テストexeを分割
+unitTests_comp_main
+unitTests_rte_output
+unitTests_flash
+
+ルール1
+同じexeに「実体＋モック」を入れるな
+
+ルール2
+モックしたい関数は別ファイルに出せ
+
+ルール3
+1テスト対象 = 1 executable
+
+@@@@@
+
 test_project3/
  ├─ third_party/
  │   └─ googletest/
