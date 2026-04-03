@@ -2,10 +2,34 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug unitTests",
+      "name": "Debug comp_main",
       "type": "cppdbg",
       "request": "launch",
-      "program": "C:/cygwin64/home/PC_User/test_project3/build/tests/unit/unitTests.exe",
+      "program": "C:/cygwin64/home/PC_User/test_project3/build/tests/unit/unitTests_comp_main.exe",
+      "args": [],
+      "cwd": "C:/cygwin64/home/PC_User/test_project3/build",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/cygwin64/bin/gdb.exe",
+      "stopAtEntry": false,
+      "externalConsole": true
+    },
+    {
+      "name": "Debug rte_output",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "C:/cygwin64/home/PC_User/test_project3/build/tests/unit/unitTests_rte_output.exe",
+      "args": [],
+      "cwd": "C:/cygwin64/home/PC_User/test_project3/build",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/cygwin64/bin/gdb.exe",
+      "stopAtEntry": false,
+      "externalConsole": true
+    },
+    {
+      "name": "Debug flash",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "C:/cygwin64/home/PC_User/test_project3/build/tests/unit/unitTests_flash.exe",
       "args": [],
       "cwd": "C:/cygwin64/home/PC_User/test_project3/build",
       "MIMode": "gdb",
