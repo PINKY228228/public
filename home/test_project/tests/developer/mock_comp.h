@@ -14,4 +14,7 @@ public:
 // グローバルポインタ
 extern MockComp* g_mock;
 
+extern int gidx;
+extern int gcall_order[2];
+
 #endif
