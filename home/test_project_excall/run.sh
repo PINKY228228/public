@@ -12,4 +12,7 @@ cd "$BUILD_DIR"
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 cmake --build .
 
-./unitTests --gtest_filter=CompMainTest.*
+# ctest:CMakeプロジェクトに登録された テストを実行するツール
+#-R unitTests:テスト名が unitTests にマッチするものだけ実行
+ctest -R unitTests --output-on-failure -V
+#./unitTests --gtest_filter=CompMainTest.*
