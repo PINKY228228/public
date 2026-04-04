@@ -6,8 +6,32 @@ extern "C" {
 }
 
 #include "mock_comp.h"
-using ::testing::InSequence;
 
+using ::testing::NiceMock;
+using ::testing::InSequence;
+using ::testing::Exactly;
+
+class Runnable : public ::testing::Test
+{
+    protected:
+    void SetUp() override{
+        SetMockRte(&p);
+    }
+
+    void TearDown() override{
+        SetMockRte(nullptr);
+    }
+    NiceMock<MockRte>p;
+};
+
+TEST_F(Runnable, CallOrder_A_then_B){
+    InSequence seq;
+    EXPECT_CALL(p, func_a()).Times(Exactly(1));
+
+    comp_cycle2();
+
+}
+#if 0
 static int call_order[2];
 static int idx;
 
@@ -36,15 +60,25 @@ TEST(CompMainTest, CallOrder_A_then_B)
     EXPECT_EQ(call_order[1], 2);
 }
 
-#if 0
-TEST(GMOCK, CallOrder_A_then_B)
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+extern "C" {
+#include "comp.h"
+}
+
+#include "mock_comp.h"
+
+using ::testing::InSequence;
+
+TEST(CompMainTest, CallOrder_A_then_B)
 {
    MockComp mock;
-    g_mock = &mock;
+    //g_mock = &mock;
 //ASSERT_NE(g_mock, nullptr);   // ★これ追加
 
-    set_comp_A(comp_A);
-    set_comp_B(comp_B);
+    //set_comp_A(comp_A);
+    //set_comp_B(comp_B);
 
     //InSequence seq;
     //EXPECT_CALL(mock, comp_A()).Times(1);
