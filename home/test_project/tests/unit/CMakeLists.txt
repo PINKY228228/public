@@ -3,16 +3,23 @@ add_library(test_common STATIC
     #test_add.cpp
     test_main.cpp
     ../csv/csv_loader.cpp
-    ../developer/FakeMicroTime.cc
+    ../developer/mock/FakeMicroTime.cc
     ../developer/MockIO.cc
 )
 
 target_include_directories(test_common
     PUBLIC
-    ${PROJECT_SOURCE_DIR}/tests/csv
-    ${PROJECT_SOURCE_DIR}/tests/developer
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_SOURCE_DIR}/src/IO
+    ${PROJECT_SOURCE_DIR}/../tests/csv
+    ${PROJECT_SOURCE_DIR}/../tests/developer/mock
+    ${PROJECT_SOURCE_DIR}/../tests/developer
+    ${PROJECT_SOURCE_DIR}/../src
+    ${PROJECT_SOURCE_DIR}/../src/IO
+
+#    ${PROJECT_SOURCE_DIR}/tests/csv
+#    ${PROJECT_SOURCE_DIR}/tests/developer/mock
+#    ${PROJECT_SOURCE_DIR}/tests/developer
+#    ${PROJECT_SOURCE_DIR}/src
+#    ${PROJECT_SOURCE_DIR}/src/IO
 )
 
 target_link_libraries(test_common
@@ -35,7 +42,7 @@ target_compile_definitions(test_common
 add_executable(unitTests_comp_main
     test_main.cpp
     ../../src/comp_main.c
-    ../developer/mock_comp.cc   # ← App_ControlLampモック
+    ../developer/mock/mock_comp.cc   # ← App_ControlLampモック
 )
 
 target_link_libraries(unitTests_comp_main
