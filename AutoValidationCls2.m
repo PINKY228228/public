@@ -1,4 +1,5 @@
 classdef AutoValidationCls2
+% AutoValidationCls2('TC6_.txt', 0, 0);
 % AutoValidationCls2('testPatternSimple3.txt', 0, 0);
 % 第1引数：テストパターンと確認出力信号のリストファイル
 % 第2引数：確認信号の決め方を指定するモード
@@ -19,9 +20,34 @@ classdef AutoValidationCls2
         config
         SKIPFLAG=1e-6
     end
-    
+
+    methods (Access = private)
+        % logsout(Dataset) → struct(フィールド=信号名, 値=timeseries)への変換
+        % 変換後の構造
+ %   └─ o
+ %      ├─ gu8_i1
+ %      │    └─ timeseries
+ %      │         ├─ Time
+ %      │         └─ Data
+ %      │
+ %      ├─ gu8_i1ideal
+ %      └─ ...
+        function a = convertLogsoutToStruct(~, simout)
+            logsout = simout.logsout;
+            o = struct();
+            for i = 1:logsout.numElements
+                sig = logsout{i};
+                sigName = matlab.lang.makeValidName(sig.Name);
+                o.(sigName) = sig.Values; % timeseriesそのまま
+            end
+            a = struct();
+            a.o = o;
+        end
+    end    
+
     methods
         function obj = AutoValidationCls2(filename, summaryMode, mode)
+            tic;
             clc;
             % コンストラクタの実行時に引数を使って設定する
             obj.modelName = bdroot();
@@ -53,7 +79,8 @@ classdef AutoValidationCls2
                 msgbox(msg);
                 return;
             end
-            disp('finished.');
+            toc;
+            % disp('finished.');
         end
 
         %% 
@@ -247,6 +274,11 @@ function [err, msg, ret] = exeSimulation(obj, arg_config)
                 [simout, TCName] = obj.runSingleSimulation(i, arg_config);
                 disp(TCName);
                 save([TCName, '.mat'], 'simout', '-v7.3');
+
+                % logsout(Dataset) → struct(フィールド=信号名, 値=timeseries)への変換
+                a = obj.convertLogsoutToStruct(simout);
+                save([TCName, '_results.mat'], 'a', '-v7.3');
+
             catch e
                 err = 1;
                 msg = {'シミュレーション実施で異常発生';
