@@ -1,6 +1,5 @@
 classdef AutoValidationCls2
 % AutoValidationCls2('TC6_.txt', 0, 0);
-% AutoValidationCls2('testPatternSimple3.txt', 0, 0);
 % 第1引数：テストパターンと確認出力信号のリストファイル
 % 第2引数：確認信号の決め方を指定するモード
 % 0:txt に書いた信号だけ比較
@@ -24,7 +23,6 @@ classdef AutoValidationCls2
     methods (Access = private)
         % logsout(Dataset) → struct(フィールド=信号名, 値=timeseries)への変換
         % 変換後の構造
- %   └─ o
  %      ├─ gu8_i1
  %      │    └─ timeseries
  %      │         ├─ Time
@@ -41,7 +39,7 @@ classdef AutoValidationCls2
                 o.(sigName) = sig.Values; % timeseriesそのまま
             end
             a = struct();
-            a.o = o;
+            a = o;
         end
     end    
 
@@ -49,6 +47,7 @@ classdef AutoValidationCls2
         function obj = AutoValidationCls2(filename, summaryMode, mode)
             tic;
             clc;
+            warning off;
             % コンストラクタの実行時に引数を使って設定する
             obj.modelName = bdroot();
             obj.summaryMode = summaryMode;
@@ -273,11 +272,11 @@ function [err, msg, ret] = exeSimulation(obj, arg_config)
             try
                 [simout, TCName] = obj.runSingleSimulation(i, arg_config);
                 disp(TCName);
-                save([TCName, '.mat'], 'simout', '-v7.3');
+                % save([TCName, '.mat'], 'simout', '-v7.3');
 
                 % logsout(Dataset) → struct(フィールド=信号名, 値=timeseries)への変換
-                a = obj.convertLogsoutToStruct(simout);
-                save([TCName, '_results.mat'], 'a', '-v7.3');
+                TEST = obj.convertLogsoutToStruct(simout);
+                save([TCName, '_', num2str(i), '.mat'], 'TEST', '-v7.3');
 
             catch e
                 err = 1;
@@ -339,7 +338,7 @@ function [simout, TCName] = runSingleSimulation(obj, i, arg_config)
         set_param(arg_config.model.name, 'StopTime', num2str(stopTimes));
     
     simout = sim(arg_config.model.name, getActiveConfigSet(arg_config.model.name));
-    save([TCName, '.mat'], 'simout', '-v7.3');
+    % save([TCName, '.mat'], 'simout', '-v7.3');
 end
 
 %% 
