@@ -167,35 +167,35 @@ classdef TP2SignalEditorCls2
             % ===== 可変長 prefix 判定 =====
             if startsWith(label, 'gfg')
                 dataType = 'logical';
-                cleanName = label(4:end);
+                % cleanName = label(4:end);
 
             elseif startsWith(label, 'gu8')
                 dataType = 'uint8';
-                cleanName = label(4:end);
+                % cleanName = label(4:end);
 
             elseif startsWith(label, 'gs8')
                 dataType = 'int8';
-                cleanName = label(4:end);
+                % cleanName = label(4:end);
 
             elseif startsWith(label, 'gu16')
                 dataType = 'uint16';
-                cleanName = label(5:end);
+                % cleanName = label(5:end);
 
             elseif startsWith(label, 'gs16')
                 dataType = 'int16';
-                cleanName = label(5:end);
+                % cleanName = label(5:end);
 
             elseif startsWith(label, 'gu32')
                 dataType = 'uint32';
-                cleanName = label(5:end);
+                % cleanName = label(5:end);
 
             elseif startsWith(label, 'gs32')
                 dataType = 'int32';
-                cleanName = label(5:end);
+                % cleanName = label(5:end);
 
             elseif startsWith(label, 'gfl')
                 dataType = 'single';
-                cleanName = label(4:end);
+                % cleanName = label(4:end);
 
             else
                 return
