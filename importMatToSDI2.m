@@ -17,73 +17,89 @@ for k = 1:numel(files)
 
         [~, baseRunName, ~] = fileparts(files(k).name);
 
-        if numel(fn) > 1
-            % ===== 複数TC → 分割 =====
-            for i = 1:numel(fn)
-                tcName = fn{i};
-                TEST = data.(tcName);
+if numel(fn) > 1
+    for i = 1:numel(fn)
+        tcName = fn{i};
+        TEST = data.(tcName);
 
-                if isempty(TEST)
-                    continue;
-                end
+        % % if isstruct(TEST)
+        %     f = fieldnames(TEST);
+        % 
+        %     % _idealだけ残す
+        %     idx = contains(f, '_ideal');
+        %     TEST = rmfield(TEST, f(~idx));
+        % 
+        %     % ideal削除（_は残る）
+        %     f = fieldnames(TEST);
+        %     for k2 = 1:numel(f)
+        %         newName = erase(f{k2}, 'ideal');
+        %         if ~strcmp(f{k2}, newName)
+        %             TEST.(newName) = TEST.(f{k2});
+        %             TEST = rmfield(TEST, f{k2});
+        %         end
+        %     end
+        % % end
 
-                % ===== SimulationOutput対応 =====
-                if isa(TEST, 'Simulink.SimulationOutput')
-                    if isprop(TEST, 'logsout')
-                        TEST = TEST.logsout;
-                    end
-                end
-
-                % ===== Dataset内 _ideal 除去 =====
-                if isa(TEST, 'Simulink.SimulationData.Dataset')
-                    newDs = Simulink.SimulationData.Dataset;
-
-                    for j = 1:TEST.numElements
-                        elem = TEST.getElement(j);
-% ---- 名前取得（強化版）----
-if ~isempty(elem.Name)
-    sigName = elem.Name;
-elseif ~isempty(elem.BlockPath)
-    sigName = char(elem.BlockPath);
+        runName = sprintf('%s_%s', baseRunName, tcName);
+        Simulink.sdi.createRun(runName, 'vars', TEST);
+    end
 else
-    sigName = '';
-end
+    % 単一TC
+    TEST = data.(fn{1});
+        % _ideal フィールド削除（struct用）
+    if isstruct(TEST)
+        f = fieldnames(TEST);
+        TEST = rmfield(TEST, f(contains(f, '_ideal')));
+    end
 
-sigName = strtrim(sigName);
-
-% パスの最後だけ取る
-parts = split(sigName, '/');
-sigName = parts{end};
-
-if isempty(sigName) || endsWith(sigName, '_ideal')
-    continue;
-end
-newDs = newDs.addElement(elem);
-                    end
-
-                    TEST = newDs;
-                end
-
-                runName = sprintf('%s_%s', baseRunName, tcName);
-                Simulink.sdi.createRun(runName, 'vars', TEST);
-            end
-
-        else
-            % ===== 単一 → 従来通り =====
-            TEST = data.(fn{1});
-
-            if isa(TEST, 'Simulink.SimulationOutput')
-                if isprop(TEST, 'logsout')
-                    TEST = TEST.logsout;
-                end
-            end
-
-            Simulink.sdi.createRun(baseRunName, 'vars', TEST);
-        end
+    Simulink.sdi.createRun(baseRunName, 'vars', TEST);    
+end    
 
     catch ME
         warning('Failed: %s (%s)', files(k).name, ME.message);
     end
 end
 
+end
+
+function ds = filterDataset(TEST, mode)
+    ds = Simulink.SimulationData.Dataset;
+
+    for j = 1:TEST.numElements
+        elem = TEST.getElement(j);
+
+        % ---- 名前取得 ----
+        if ~isempty(elem.Name)
+            sigName = elem.Name;
+        elseif ~isempty(elem.BlockPath)
+            sigName = char(elem.BlockPath);
+            parts = split(sigName, '/');
+            sigName = parts{end};
+        else
+            sigName = '';
+        end
+
+        sigName = strtrim(sigName);
+
+        isIdeal = endsWith(sigName, '_ideal');
+
+        if strcmp(mode, 'removeIdeal')
+            % ===== 単一TC：_ideal削除 =====
+            if isIdeal
+                continue;
+            end
+
+        elseif strcmp(mode, 'onlyIdeal')
+            % ===== 複数TC：_idealだけ抽出 =====
+            if ~isIdeal
+                continue;
+            end
+
+            % "ideal"だけ削除（_は残す）
+            sigName = erase(sigName, 'ideal');  % gfgo4_ideal → gfgo4_
+            elem.Name = sigName;
+        end
+
+        ds = ds.addElement(elem);
+    end
 end
