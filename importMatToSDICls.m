@@ -6,6 +6,8 @@ classdef importMatToSDICls
     % importMatToSDICls.compareRunByName('TC6_.xlsx_TC1_ideal','o_1');
     % レポート出力
     % importMatToSDICls.compareRunByName('TC6_.xlsx_TC3_ideal','ToFileName_3','TC3');
+    % importMatToSDICls.compareRunByName('TC6_.xlsx_TC3_ideal','o_3','TC3');
+    % importMatToSDICls.compareRunByName('TC6_.xlsx_TC3_ideal','test','TC3'); %手動でtest.matをインポート時⇒比較されない
     methods(Static)
 
 %% ===== MAT → SDI =====
@@ -207,6 +209,8 @@ function compareRunByName(baseName, cmpName, reportFile)
             warnMsg = 'report API未対応 → mldatx保存にフォールバック'
             warning(warnMsg);
             % Simulink.sdi.save(strrep(reportFile,'.zip','.mldatx'));
+             Simulink.sdi.report('ReportType','Compare', 'ReportTitle',...
+    [baseName ' vs ' cmpName '_results'],'ReportAuthor', 'Mie','ReportOutputFile',strrep(reportFile,'.zip', ''));
         end
     end
 end
