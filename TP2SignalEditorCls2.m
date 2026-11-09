@@ -143,6 +143,10 @@ classdef TP2SignalEditorCls2
                 'BlockType', 'SubSystem', 'MaskType', 'SignalEditor');
 
             set_param(se_handle, 'FileName', matfile);
+            % 信号プロパティを全ての信号に適用
+            set_param(se_handle, 'ApplySigPropsToAllSignals', 'on');
+            % 最終値保持
+            set_param(se_handle, 'OutputAfterFinalValue', 'Holding final value');
             save_system(modelName);
             toc;
         end
