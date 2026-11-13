@@ -1,0 +1,1 @@
+https://jp.mathworks.com/help/sltest/ug/create-external-data-files-to-use-in-test-cases.html?utm_source=chatgpt.com
