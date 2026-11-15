@@ -19,15 +19,31 @@ classdef TP2SignalEditorCls2
 % class(ds{1}.Data)
 % ans =
 %     'uint8'
+
+% Excel形式の違いによるデータ範囲の切り出し
+%
+% 【従来形式】
+% 1行目 : Time, SignalA, SignalB, ..., SUT_ID
+% 2行目～ : 時系列データ
+% NOTES列より前を有効列として抽出する。
+%
+% 【Simulink Test形式】
+% 1行目 : time, SignalA, SignalB, ...
+% 2行目 : Interp:zoh
+% 3行目 : Type:xxx
+% 4行目 : unit
+% 5行目 : Source:Input / Source:Output
+% 6行目～ : 時系列データ
+% 1行目の信号名と6行目以降のデータを抽出する。
 % (使用例)
 % TC6_.xlsxファイルの左端（Time列）から'SUT_ID'列の一つ前までを入力データとし、
 % 0.01[s]間隔でmatファイル化する場合
 % % TP2SignalEditor クラスをインスタンス化;データを処理
-% editor = TP2SignalEditorCls2('TC6_.xlsx',0.01);editor.process();    
+% editor = TP2SignalEditorCls2('TC61_.xlsx',0.01);editor.process();    
     properties
         XlsFile
         Ts          % [] or scalar
-        KeyWord = 'SUT_ID'; % データ範囲と範囲外を切り分けるため、ヘッダ行へ記載するキーワード
+        KeyWord = 'NOTES'; % データ範囲と範囲外を切り分けるため、ヘッダ行へ記載するキーワード
     end
     
     methods
@@ -55,14 +71,22 @@ classdef TP2SignalEditorCls2
                 sutIdx = find(strcmp(header, obj.KeyWord), 1);
 
                 if isempty(sutIdx)
-                    error('SUT_ID列が見つからない');
+                    error('最終列データのキーワードが見つからない');
                 end
-
                 c1 = 1;              % Time列（前提）
                 c2 = sutIdx - 1;     % KeyWordの1つ前まで
 
+% ===== Excel形式判定 =====
+header = iRaw(1,:);
+% Simulink Test形式判定
+isST = any(strcmpi(header, 'time'));
+if isST
+    % 6行目以降をデータとして取得
+    typeRow = iRaw(3,:);
+    iRaw = [iRaw(1, c1:c2); iRaw(6:end, c1:c2)];
+else
                 iRaw = iRaw(:, c1:c2);
-
+end
                 % ===== 列数統一 =====
                 numCols = size(iRaw, 2);
                 activeGroupName = cell(1, numCols);
@@ -109,8 +133,18 @@ classdef TP2SignalEditorCls2
                     signal.TimeInfo.Format = '%.2f';
 
                     label = sigrawdata(p).labels{n};
-                    [dataType, cleanName] = TP2SignalEditorCls2.parseDataTypeFromHeader(label);
 
+if isST
+    dataType = erase(typeRow{n}, 'Type:');
+    dataType = strtrim(dataType);
+    if strcmpi(dataType, 'boolean')
+        dataType = 'logical';
+    end
+    cleanName = label;
+else
+    [dataType, cleanName] = ...
+        TP2SignalEditorCls2.parseDataTypeFromHeader(label);
+end
                     signal.Name = cleanName;
                     signal.Data = cast(signal.Data, dataType);
                     signal.DataInfo.Interpolation = 'zoh';
