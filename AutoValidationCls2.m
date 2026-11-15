@@ -1,17 +1,17 @@
 classdef AutoValidationCls2
 % AutoValidationCls2('TC6_.txt', 0, 0);
-% ‘æ1ˆø”FƒeƒXƒgƒpƒ^[ƒ“‚ÆŠm”Fo—ÍM†‚ÌƒŠƒXƒgƒtƒ@ƒCƒ‹
-% ‘æ2ˆø”FŠm”FM†‚ÌŒˆ‚ß•û‚ğw’è‚·‚éƒ‚[ƒh
-% 0:txt ‚É‘‚¢‚½M†‚¾‚¯”äŠr
-% 1:ƒ‚ƒfƒ‹ã‚ÅƒƒO‚µ‚Ä‚¢‚é_ideal M†‚ğ”äŠr‘ÎÛ
-% ‘æ3ˆø”FƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“Œ‹‰Ê‚ÌOK/NG”»’è•û–@‚ğ§Œä‚·‚éƒtƒ‰ƒOB
-%   src—ñ‚ª 'SKIPFLAG' ‚Ìê‡‚É”»’è‚ğƒXƒLƒbƒv‚µ '-' ‚ğo—Í‚·‚é‚©‚Ç‚¤‚©‚ğ§Œä‚·‚éB
-% Result_XXXXXX_yyyymmddHHMMSS.xlsxŒ`®
-% ƒV[ƒgSummary
-% B8 ŒŸØŒ‹‰Ê
-% C9 ŒŸØŠÂ‹«
-% C10 À{“ú
-% C12 OK:ˆê’vANGF•sˆê’v
+% ç¬¬1å¼•æ•°ï¼šãƒ†ã‚¹ãƒˆãƒ‘ã‚¿ãƒ¼ãƒ³ã¨ç¢ºèªå‡ºåŠ›ä¿¡å·ã®ãƒªã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«
+% ç¬¬2å¼•æ•°ï¼šç¢ºèªä¿¡å·ã®æ±ºã‚æ–¹ã‚’æŒ‡å®šã™ã‚‹ãƒ¢ãƒ¼ãƒ‰
+% 0:txt ã«æ›¸ã„ãŸä¿¡å·ã ã‘æ¯”è¼ƒ
+% 1:ãƒ¢ãƒ‡ãƒ«ä¸Šã§ãƒ­ã‚°ã—ã¦ã„ã‚‹_ideal ä¿¡å·ã‚’æ¯”è¼ƒå¯¾è±¡
+% ç¬¬3å¼•æ•°ï¼šã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³çµæœã®OK/NGåˆ¤å®šæ–¹æ³•ã‚’åˆ¶å¾¡ã™ã‚‹ãƒ•ãƒ©ã‚°ã€‚
+%   srcåˆ—ãŒ 'SKIPFLAG' ã®å ´åˆã«åˆ¤å®šã‚’ã‚¹ã‚­ãƒƒãƒ—ã— '-' ã‚’å‡ºåŠ›ã™ã‚‹ã‹ã©ã†ã‹ã‚’åˆ¶å¾¡ã™ã‚‹ã€‚
+% Result_XXXXXX_yyyymmddHHMMSS.xlsxå½¢å¼
+% ã‚·ãƒ¼ãƒˆSummary
+% B8 æ¤œè¨¼çµæœ
+% C9 æ¤œè¨¼ç’°å¢ƒ
+% C10 å®Ÿæ–½æ—¥æ™‚
+% C12 OK:ä¸€è‡´ã€NGï¼šä¸ä¸€è‡´
     properties
         modelName
         summaryMode
@@ -21,22 +21,22 @@ classdef AutoValidationCls2
     end
 
     methods (Access = private)
-        % logsout(Dataset) ¨ struct(ƒtƒB[ƒ‹ƒh=M†–¼, ’l=timeseries)‚Ö‚Ì•ÏŠ·
-        % •ÏŠ·Œã‚Ì\‘¢
- %      „¥„Ÿ gu8_i1
- %      „     „¤„Ÿ timeseries
- %      „          „¥„Ÿ Time
- %      „          „¤„Ÿ Data
- %      „ 
- %      „¥„Ÿ gu8_i1ideal
- %      „¤„Ÿ ...
+        % logsout(Dataset) â†’ struct(ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰=ä¿¡å·å, å€¤=timeseries)ã¸ã®å¤‰æ›
+        % å¤‰æ›å¾Œã®æ§‹é€ 
+ %      â”œâ”€ gu8_i1
+ %      â”‚    â””â”€ timeseries
+ %      â”‚         â”œâ”€ Time
+ %      â”‚         â””â”€ Data
+ %      â”‚
+ %      â”œâ”€ gu8_i1ideal
+ %      â””â”€ ...
         function a = convertLogsoutToStruct(~, simout)
             logsout = simout.logsout;
             o = struct();
             for i = 1:logsout.numElements
                 sig = logsout{i};
                 sigName = matlab.lang.makeValidName(sig.Name);
-                o.(sigName) = sig.Values; % timeseries‚»‚Ì‚Ü‚Ü
+                o.(sigName) = sig.Values; % timeseriesãã®ã¾ã¾
             end
             a = struct();
             a = o;
@@ -48,7 +48,7 @@ classdef AutoValidationCls2
             tic;
             clc;
             warning off;
-            % ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÌÀs‚Éˆø”‚ğg‚Á‚Äİ’è‚·‚é
+            % ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã®å®Ÿè¡Œæ™‚ã«å¼•æ•°ã‚’ä½¿ã£ã¦è¨­å®šã™ã‚‹
             obj.modelName = bdroot();
             obj.summaryMode = summaryMode;
             obj.signalList = obj.readSignalNames(filename);
@@ -65,7 +65,7 @@ classdef AutoValidationCls2
                 return;
             end
 
-            % ƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“À{
+            % ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³å®Ÿæ–½
             obj.config.logSignals = obj.signalList;
             [err, msg, obj.config] = obj.exeSimulation(obj.config);
             if err
@@ -91,11 +91,11 @@ classdef AutoValidationCls2
                 parts = strsplit(strtrim(tline), ',');
                 scenario = strtrim(parts{1});
 if obj.summaryMode == 0
-    % ]—ˆFTC1,o1,o2
+    % å¾“æ¥ï¼šTC1,o1,o2
     signals = strtrim(parts(2:end));
     signalList(scenario) = signals;
 elseif obj.summaryMode == 1
-    % M†‚ÍŒã‚ÅExcel‚©‚ç’Šo
+    % ä¿¡å·ã¯å¾Œã§Excelã‹ã‚‰æŠ½å‡º
     signalList(scenario) = {};
 end
                 % signals  = strtrim(parts(2:end));
@@ -107,24 +107,24 @@ end
         
         %% 
         function [err, msg] = chkPreReq(obj)
-            % ‘O’ñğŒ‚ğƒ`ƒFƒbƒN‚·‚éˆ—
+            % å‰ææ¡ä»¶ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹å‡¦ç†
             err = 0;
             msg = '';
             try
                 if strcmp(bdroot, 'simulink') || strcmp(bdroot, '')
                     err = 1;
-                    msg = {'ŒŸØ‘ÎÛ‚Ìƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ªŒ©“–‚½‚è‚Ü‚¹‚ñB'; 'ƒ‚ƒfƒ‹‚ªŠJ‚¢‚½ó‘Ô‚Åƒc[ƒ‹‚ğÀsB'};
+                    msg = {'æ¤œè¨¼å¯¾è±¡ã®ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹å½“ãŸã‚Šã¾ã›ã‚“ã€‚'; 'ãƒ¢ãƒ‡ãƒ«ãŒé–‹ã„ãŸçŠ¶æ…‹ã§ãƒ„ãƒ¼ãƒ«ã‚’å®Ÿè¡Œã€‚'};
                     return;
                 end
                 try
                     set_param(bdroot, 'SimulationCommand', 'Update');
                 catch
                     err = 1;
-                    msg = {'ƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“Às•s‰ÂB'};
+                    msg = {'ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³å®Ÿè¡Œä¸å¯ã€‚'};
                 end
             catch
                 err = 1;
-                msg = {'ƒc[ƒ‹‘OŠm”Fˆ—‚ÅˆÙí”­¶B'};
+                msg = {'ãƒ„ãƒ¼ãƒ«å‰ç¢ºèªå‡¦ç†ã§ç•°å¸¸ç™ºç”Ÿã€‚'};
             end
         end
 
@@ -139,7 +139,7 @@ function [err, msg, ret] = initConfig(~, okng_mode)
                 ret.result.file = [pwd '/Result_', ret.model.name, '_', datestr(now, 'yyyymmddHHMMSS'), '.xlsx'];
                 ret.result.date = datestr(now, 'yyyy/mm/dd HH:MM:SS');
                 ret.result.rawdats = {};
-                % M†ƒf[ƒ^‡”Û”»’è—p
+                % ä¿¡å·ãƒ‡ãƒ¼ã‚¿åˆå¦åˆ¤å®šç”¨
                 ret.result.editdata = {};
                 ret.result.judgement = {};
                 ret.message.warning{1} = 'MATLAB:xlswrite:AddSheet';
@@ -151,42 +151,42 @@ function [err, msg, ret] = initConfig(~, okng_mode)
                 ret.okng_mode=okng_mode;
                     ret.mode = 'SE';
                     ret.signalEditor.handle = find_system(ret.model.name, 'FindAll', 'on', 'BlockType', 'SubSystem', 'MaskType', 'SignalEditor');
-            % æ“¾‚Å‚«‚éƒpƒ‰ƒ[ƒ^–¼‚ğ•\¦
+            % å–å¾—ã§ãã‚‹ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿åã‚’è¡¨ç¤º
 % params = get_param(gcb, 'ObjectParameters')
-                    ret.signalEditor.file = get_param(ret.signalEditor.handle, 'FileName');  % MATƒtƒ@ƒCƒ‹ƒpƒX
+                    ret.signalEditor.file = get_param(ret.signalEditor.handle, 'FileName');  % MATãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹
 
-% ƒAƒNƒeƒBƒu‚ÈƒVƒiƒŠƒI–¼‚ğæ“¾
+% ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªã‚·ãƒŠãƒªã‚ªåã‚’å–å¾—
                     ret.signalEditor.activeScenario = get_param(ret.signalEditor.handle, 'ActiveScenario');
 
-% MAT ƒtƒ@ƒCƒ‹“à‚Ìƒf[ƒ^‚ğƒ[ƒh
+% MAT ãƒ•ã‚¡ã‚¤ãƒ«å†…ã®ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ­ãƒ¼ãƒ‰
                     data = load(ret.signalEditor.file);
 
-% ƒVƒiƒŠƒIˆê——‚ğæ“¾iƒf[ƒ^\‘¢‚ÌƒgƒbƒvƒŒƒxƒ‹‚Ì•Ï”‚ªƒVƒiƒŠƒI–¼‚É‚È‚éj
+% ã‚·ãƒŠãƒªã‚ªä¸€è¦§ã‚’å–å¾—ï¼ˆãƒ‡ãƒ¼ã‚¿æ§‹é€ ã®ãƒˆãƒƒãƒ—ãƒ¬ãƒ™ãƒ«ã®å¤‰æ•°ãŒã‚·ãƒŠãƒªã‚ªåã«ãªã‚‹ï¼‰
                     scenarioNames = fieldnames(data);
                     numScenarios = numel(scenarioNames);
                     ret.signalEditor.numScenarios = numScenarios;
 
-% Signal Editor ‚Ìƒ[ƒNƒXƒy[ƒX•Ï”‚ğæ“¾
-% Œ‹‰Ê‚ğ•Û‘¶‚·‚é\‘¢‘Ì
+% Signal Editor ã®ãƒ¯ãƒ¼ã‚¯ã‚¹ãƒšãƒ¼ã‚¹å¤‰æ•°ã‚’å–å¾—
+% çµæœã‚’ä¿å­˜ã™ã‚‹æ§‹é€ ä½“
                     ret.signalEditor.scenarioDetails = struct();
 
                     for i = 1:numScenarios
                         scenarioName = scenarioNames{i};
                         activeScenario=scenarioName;
-    % ŠeƒVƒiƒŠƒI‚Ì•Ï””‚ğæ“¾
+    % å„ã‚·ãƒŠãƒªã‚ªã®å¤‰æ•°æ•°ã‚’å–å¾—
                         numVariables = data.(scenarioName).numElements;
     
-    % Še•Ï”‚Ì StopTime ‚ğŠi”[‚·‚é”z—ñ
+    % å„å¤‰æ•°ã® StopTime ã‚’æ ¼ç´ã™ã‚‹é…åˆ—
                         stopTimes = zeros(1, numVariables);
     
                         for j = 1:numVariables
                              variableName = data.(scenarioName){j}.Name;
         
-        % •Ï”‚ª timeseries ƒf[ƒ^‚Å‚ ‚é‚±‚Æ‚ğŠm”F
+        % å¤‰æ•°ãŒ timeseries ãƒ‡ãƒ¼ã‚¿ã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèª
                              stopTimes(j) = data.(scenarioName){j}.Time(end);
                         end
     
-    % ƒVƒiƒŠƒI‚Ìî•ñ‚ğ\‘¢‘Ì‚É•Û‘¶
+    % ã‚·ãƒŠãƒªã‚ªã®æƒ…å ±ã‚’æ§‹é€ ä½“ã«ä¿å­˜
                         ret.signalEditor.scenarioDetails(i).activeScenario = activeScenario;
                         ret.signalEditor.scenarioDetails(i).scenarioName = scenarioName;
                         ret.signalEditor.scenarioDetails(i).numVariables = numVariables;
@@ -195,9 +195,9 @@ function [err, msg, ret] = initConfig(~, okng_mode)
                 catch e
                     err = 1;
                     if isempty(e.stack)
-                        msg = {'‰Šúİ’èˆ—‚ÅˆÙí”­¶B', e.message};
+                        msg = {'åˆæœŸè¨­å®šå‡¦ç†ã§ç•°å¸¸ç™ºç”Ÿã€‚', e.message};
                     else
-                        msg = {'‰Šúİ’èˆ—‚ÅˆÙí”­¶B';
+                        msg = {'åˆæœŸè¨­å®šå‡¦ç†ã§ç•°å¸¸ç™ºç”Ÿã€‚';
                          [e.stack(1).name, ' (line: ', num2str(e.stack(1).line), ')']};
                     end
                 end
@@ -205,25 +205,25 @@ function [err, msg, ret] = initConfig(~, okng_mode)
 
 %% 
 function datasetSignals = getSDILogData(~, targetSignals)
-    % SDI‚ÌƒƒOƒf[ƒ^‚ğæ“¾
+    % SDIã®ãƒ­ã‚°ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
     runIDs = Simulink.sdi.getAllRunIDs;
-    latestRunID = runIDs(end); % ÅV‚ÌƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“ƒ‰ƒ“‚ğæ“¾
+    latestRunID = runIDs(end); % æœ€æ–°ã®ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ãƒ©ãƒ³ã‚’å–å¾—
     runData = Simulink.sdi.getRun(latestRunID);
 
-    % Dataset ‚ğì¬
-    datasetSignals = Simulink.SimulationData.Dataset; % ‹ó‚ÌDatasetì¬
+    % Dataset ã‚’ä½œæˆ
+    datasetSignals = Simulink.SimulationData.Dataset; % ç©ºã®Datasetä½œæˆ
     signalCount = runData.SignalCount;
 
     for l = 1:signalCount
         sig = runData.getSignalByIndex(l);
 
-        % w’è‚µ‚½M† "net_val" ‚Æ "ex_net_val" ‚ğŒŸõ
-        % targetSignals ‚Í string ”z—ñ‚Ü‚½‚Í cell ”z—ñ‚Å‚ ‚é‚Æ‰¼’è
-        % ƒlƒXƒg‚³‚ê‚½ cell ‚©‚ç’†g‚ğæ‚èo‚·
+        % æŒ‡å®šã—ãŸä¿¡å· "net_val" ã¨ "ex_net_val" ã‚’æ¤œç´¢
+        % targetSignals ã¯ string é…åˆ—ã¾ãŸã¯ cell é…åˆ—ã§ã‚ã‚‹ã¨ä»®å®š
+        % ãƒã‚¹ãƒˆã•ã‚ŒãŸ cell ã‹ã‚‰ä¸­èº«ã‚’å–ã‚Šå‡ºã™
         if iscell(targetSignals) && iscell(targetSignals{1})
-            targetSignals = targetSignals{1};  % ’†‚Ì cell ‚ğæ‚èo‚·
+            targetSignals = targetSignals{1};  % ä¸­ã® cell ã‚’å–ã‚Šå‡ºã™
         end
-        % ˆÀ‘S‚É string ”z—ñ‚Ö•ÏŠ·
+        % å®‰å…¨ã« string é…åˆ—ã¸å¤‰æ›
         if iscell(targetSignals)
             targetSignals = string(targetSignals);
         end
@@ -232,10 +232,10 @@ function datasetSignals = getSDILogData(~, targetSignals)
             values = sig.Values;
 
             if isempty(values) || isempty(values.Time) || isempty(values.Data)
-                continue; % ƒf[ƒ^‚ª‹ó‚È‚çƒXƒLƒbƒv
+                continue; % ãƒ‡ãƒ¼ã‚¿ãŒç©ºãªã‚‰ã‚¹ã‚­ãƒƒãƒ—
             end
 
-            % Dataset ‚ÉM†‚ğ’Ç‰Á
+            % Dataset ã«ä¿¡å·ã‚’è¿½åŠ 
             ts = timeseries(values.Data, values.Time);
             ts.Name = sig.Name;
             datasetSignals = datasetSignals.addElement(ts);
@@ -256,35 +256,35 @@ function [err, msg, ret] = exeSimulation(obj, arg_config)
         col_src = 2;
 
         allScenarios = {arg_config.signalEditor.scenarioDetails.scenarioName};
-        targetScenarios = keys(obj.signalList);  % Map‚ÌƒL[
+        targetScenarios = keys(obj.signalList);  % Mapã®ã‚­ãƒ¼
 
-        % Às‘ÎÛ‚¾‚¯’Šo
+        % å®Ÿè¡Œå¯¾è±¡ã ã‘æŠ½å‡º
         validIdx = find(ismember(allScenarios, targetScenarios));
-        % numTests ‚ğ arg_config ‚ÉŠi”[‚µ‚Ä“n‚·B
+        % numTests ã‚’ arg_config ã«æ ¼ç´ã—ã¦æ¸¡ã™ã€‚
         ret.validIdx = validIdx;
 
         for k = 1:length(validIdx)% numTests
-            i = validIdx(k);   % © ÀÛ‚Ìscenario index
+            i = validIdx(k);   % â† å®Ÿéš›ã®scenario index
             clear mex;
             TCName = '';
             simout = [];
-             % --- ‡@ ƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“Às‚Æ•Û‘¶ ---
+             % --- â‘  ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³å®Ÿè¡Œã¨ä¿å­˜ ---
             try
                 [simout, TCName] = obj.runSingleSimulation(i, arg_config);
                 disp(TCName);
                 % save([TCName, '.mat'], 'simout', '-v7.3');
 
-                % logsout(Dataset) ¨ struct(ƒtƒB[ƒ‹ƒh=M†–¼, ’l=timeseries)‚Ö‚Ì•ÏŠ·
+                % logsout(Dataset) â†’ struct(ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰=ä¿¡å·å, å€¤=timeseries)ã¸ã®å¤‰æ›
                 TEST = obj.convertLogsoutToStruct(simout);
                 save([TCName, '_', num2str(i), '.mat'], 'TEST', '-v7.3');
 
             catch e
                 err = 1;
-                msg = {'ƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“À{‚ÅˆÙí”­¶';
+                msg = {'ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³å®Ÿæ–½ã§ç•°å¸¸ç™ºç”Ÿ';
                 [e.stack(1).name, ' (line: ', num2str(e.stack(1).line), ')']};
             end
 
-            % --- ‡A SDIƒƒOæ“¾E•]‰¿ˆ— ---
+            % --- â‘¡ SDIãƒ­ã‚°å–å¾—ãƒ»è©•ä¾¡å‡¦ç† ---
             try
                 scenarioName = arg_config.signalEditor.scenarioDetails(i).scenarioName;
                 if isKey(obj.signalList, scenarioName)
@@ -305,7 +305,7 @@ else
 end                    
                     % targetSignals = obj.signalList(scenarioName);
                 else
-                    continue  % txt‚É–³‚¢ƒVƒiƒŠƒI‚ÍƒXƒLƒbƒv
+                    continue  % txtã«ç„¡ã„ã‚·ãƒŠãƒªã‚ªã¯ã‚¹ã‚­ãƒƒãƒ—
                 end
                 % [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
                 % obj.evaluateSimulationOutput(simout, {targetSignals}, arg_config.okng_mode);
@@ -322,7 +322,7 @@ end
                 % end
             catch e
                 err = 1;
-                msg = {'•]‰¿ˆ—¸”s';
+                msg = {'è©•ä¾¡å‡¦ç†å¤±æ•—';
                 [e.stack(1).name, ' (line: ', num2str(e.stack(1).line), ')']};
             end
         end
@@ -336,7 +336,14 @@ function [simout, TCName] = runSingleSimulation(obj, i, arg_config)
         set_param(arg_config.signalEditor.handle, 'ActiveScenario', TCName);
         stopTimes = arg_config.signalEditor.scenarioDetails(i).stopTimes(2);
         set_param(arg_config.model.name, 'StopTime', num2str(stopTimes));
-    
+
+    % ãƒ†ã‚¹ãƒˆãƒ‘ã‚¿ãƒ¼ãƒ³å¤‰æ›´æ™‚ã€Signal Editorã®ãƒ–ãƒ­ãƒƒã‚¯ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’é–‹ã„ã¦ã€matãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠã™ã‚‹æ“ä½œã‚’è‡ªå‹•åŒ–ã™ã‚‹ãŸã‚ã€
+    % å†èª­ã¿è¾¼ã¿ã•ã›ã‚‹MATãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¸Šæ›¸ãæ›´æ–°ã—ãŸå¾Œã€Signal Editorã«å†èª­ã¿è¾¼ã¿ã•ã›ã‚‹    
+    % ç¾åœ¨ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—
+    fname = get_param(arg_config.signalEditor.handle, 'Filename');
+    % åŒã˜ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å†è¨­å®š
+    set_param(arg_config.signalEditor.handle, 'Filename', fname);
+
     simout = sim(arg_config.model.name, getActiveConfigSet(arg_config.model.name));
     % save([TCName, '.mat'], 'simout', '-v7.3');
 end
@@ -360,11 +367,11 @@ function [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
         for jj = 1:numel(simout.logsout.getElementNames)
             name_j = simout.logsout{jj}.Name;
             if strcmp(name_j, signalLists{j})
-            % ˆê’v‚µ‚½ signalList{i} ‚É‘Î‚µ‚Äˆ—‚ğs‚¤
-            % element.Data ‚ğg‚Á‚½ˆ—‚ğ‘‚­
+            % ä¸€è‡´ã—ãŸ signalList{i} ã«å¯¾ã—ã¦å‡¦ç†ã‚’è¡Œã†
+            % element.Data ã‚’ä½¿ã£ãŸå‡¦ç†ã‚’æ›¸ã
                 simout.logsout{jj}.Name;
                 signal_data = simout.logsout{jj}.Values.Data;
-                % •K—v‚È‚ç break; ‚µ‚ÄŠO‘¤‚É–ß‚é
+                % å¿…è¦ãªã‚‰ break; ã—ã¦å¤–å´ã«æˆ»ã‚‹
                 continue;
                 
             elseif strcmp(name_j, [signalLists{j} 'ideal'])
@@ -378,14 +385,14 @@ function [tmp_sigdata, tmp_rawdata, tmp_editdata, tmp_judgement] = ...
 
         if flg
             flg = 0;
-            timeVec = simout.logsout{jj}.Values.Time;  % © jj‚É‡‚í‚¹‚é
+            timeVec = simout.logsout{jj}.Values.Time;  % â† jjã«åˆã‚ã›ã‚‹
             timeCol = num2cell(timeVec);
             tmp_editdata = [{'Time'; ''}; timeCol];
             tmp_rawdata  = [{'Time'; ''}; timeCol];
             tmp_sigdata = {};
         end
 
-% === ƒTƒCƒY•â³ ===
+% === ã‚µã‚¤ã‚ºè£œæ­£ ===
 len_mdl = length(signal_data);
 len_src = length(signal_ex_data);
 
@@ -393,7 +400,8 @@ if len_mdl == 1 && len_src > 1
     signal_data = repmat(signal_data, len_src, 1);
 elseif len_src == 1 && len_mdl > 1
     signal_ex_data = repmat(signal_ex_data, len_mdl, 1);
-end        
+end      
+        % signal_data ã¨signal_ex_data ã®å‹ãŒã‚ã£ã¦ã„ã‚‹ã“ã¨
         sig_val_raw = num2cell([signal_data, signal_ex_data]);
         sig_val_edit = [obj.editData(sig_val_raw(:,1)), obj.editData(sig_val_raw(:,2))];
 
@@ -402,17 +410,17 @@ end
         tmp_rawdata = [tmp_rawdata, [sig_tit; sig_val_raw]];
         tmp_sigdata = [tmp_sigdata, signalLists{j}];
 
-        % ”»’èˆ—
+        % åˆ¤å®šå‡¦ç†
         tolerance = obj.SKIPFLAG;
         is_equal = all(abs(cell2mat(sig_val_raw(:, col_mdl)) - ...
                            cell2mat(sig_val_raw(:, col_src))) < tolerance);
  
-        % === ”»’èˆ—imode ‚É‚æ‚éØ‚è‘Ö‚¦j ===
-        numRows = size(sig_val_raw, 1); % ƒf[ƒ^‚Ìs”
-        sig_results = cell(numRows, 1); % ”»’èŒ‹‰Ê‚ğŠi”[‚·‚é cell ”z—ñ
-        % ”»’èƒ‚[ƒhi‘æ3ˆø”‚ÅØ‚è‘Ö‚¦j
+        % === åˆ¤å®šå‡¦ç†ï¼ˆmode ã«ã‚ˆã‚‹åˆ‡ã‚Šæ›¿ãˆï¼‰ ===
+        numRows = size(sig_val_raw, 1); % ãƒ‡ãƒ¼ã‚¿ã®è¡Œæ•°
+        sig_results = cell(numRows, 1); % åˆ¤å®šçµæœã‚’æ ¼ç´ã™ã‚‹ cell é…åˆ—
+        % åˆ¤å®šãƒ¢ãƒ¼ãƒ‰ï¼ˆç¬¬3å¼•æ•°ã§åˆ‡ã‚Šæ›¿ãˆï¼‰
         if nargin < 3 || isempty(mode)
-            mode = 0;  % ƒfƒtƒHƒ‹ƒgFŠ®‘Sˆê’vƒ`ƒFƒbƒN
+            mode = 0;  % ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆï¼šå®Œå…¨ä¸€è‡´ãƒã‚§ãƒƒã‚¯
         end
 
         for row = 1:numRows
@@ -420,7 +428,7 @@ end
     val_src = sig_val_raw{row, col_src};
 
     if mode == 1
-        % src—ñ‚ª½·¯ÌßÌ×¸ŞSKIPFLAG‚Ìê‡‚Í '-' ‚É‚·‚é
+        % srcåˆ—ãŒï½½ï½·ï½¯ï¾Œï¾Ÿï¾Œï¾—ï½¸ï¾SKIPFLAGã®å ´åˆã¯ '-' ã«ã™ã‚‹
         if isequal(obj.SKIPFLAG, val_src)
             sig_results{row} = '-';
         elseif isequal(val_mdl, val_src)
@@ -429,7 +437,7 @@ end
             sig_results{row} = 'NG';
         end
     else
-        % ]—ˆ’Ê‚è‚Ì”äŠri”’l‚Ì‹ß—ˆê’vƒ`ƒFƒbƒNj
+        % å¾“æ¥é€šã‚Šã®æ¯”è¼ƒï¼ˆæ•°å€¤ã®è¿‘ä¼¼ä¸€è‡´ãƒã‚§ãƒƒã‚¯ï¼‰
         if isequal(val_mdl, val_src)
             sig_results{row} = 'OK';
         else
@@ -439,17 +447,17 @@ end
         end
         tmp_editdata = [tmp_editdata, [sig_tit2; [sig_val_raw, sig_results]]];
 
-        % src—ñ‚Æmdl—ñ‚ğæ“¾
+        % srcåˆ—ã¨mdlåˆ—ã‚’å–å¾—
         src_col = sig_val_raw(:, col_src);
         mdl_col = sig_val_raw(:, col_mdl);
 
-        % Šú‘Ò’l—ñ‚ª‚·‚×‚Ä '-' ‚Ìê‡
+        % æœŸå¾…å€¤åˆ—ãŒã™ã¹ã¦ '-' ã®å ´åˆ
         if all(cellfun(@(x) isequal(x, obj.SKIPFLAG), src_col))
             tmp_judgement{j} = '-';
-        % ƒ‚ƒfƒ‹o—Í‚ÆŠú‘Ò’l‚ª•sˆê’v‚Ì‚à‚Ì‚ª1‚Â‚Å‚à‚ ‚éê‡i'-' ‚Í–³‹j
+        % ãƒ¢ãƒ‡ãƒ«å‡ºåŠ›ã¨æœŸå¾…å€¤ãŒä¸ä¸€è‡´ã®ã‚‚ã®ãŒ1ã¤ã§ã‚‚ã‚ã‚‹å ´åˆï¼ˆ'-' ã¯ç„¡è¦–ï¼‰
         elseif any(~cellfun(@(s, m) isequal(s, obj.SKIPFLAG) || isequal(s, m), src_col, mdl_col))
             tmp_judgement{j} = 'NG';
-        % ã‹LˆÈŠO ¨ —LŒø‚È”äŠr‚·‚×‚Ä‚ªˆê’v‚µ‚Ä‚¢‚½
+        % ä¸Šè¨˜ä»¥å¤– â†’ æœ‰åŠ¹ãªæ¯”è¼ƒã™ã¹ã¦ãŒä¸€è‡´ã—ã¦ã„ãŸ
             else
             tmp_judgement{j} = 'OK';
         end  
@@ -475,7 +483,7 @@ end
 function [err, msg] = outResult(obj, arg_config)
     err = 0;
     msg = '';
-    % EXCELƒT[ƒoì¬
+    % EXCELã‚µãƒ¼ãƒä½œæˆ
     ex = actxserver('Excel.Application');
     wb = ex.workbooks.Open(arg_config.result.tmp);
     ex.Visible = 1;
@@ -492,7 +500,7 @@ function [err, msg] = outResult(obj, arg_config)
         wb.SaveAs(arg_config.result.file);
     catch e
         err = 1;
-        msg = {'ƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“À{‚ÅˆÙí”­¶';
+        msg = {'ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³å®Ÿæ–½ã§ç•°å¸¸ç™ºç”Ÿ';
         [e.stack(1).name, ' (line: ', num2str(e.stack(1).line), ')']};
     end
 
@@ -505,7 +513,7 @@ end
 
 %% 
 function outSummary(~, arg_wb, arg_config)
-% === ‘SƒVƒiƒŠƒI‚ÌM†‚ğ union ‚Åæ“¾ ===
+% === å…¨ã‚·ãƒŠãƒªã‚ªã®ä¿¡å·ã‚’ union ã§å–å¾— ===
 allSig = unique([arg_config.result.sigName{:}]);
 sig_num = length(allSig);
     sheet_name = 'Summary';
@@ -525,35 +533,35 @@ sig_num = length(allSig);
     sh.Activate;
     sh.Range(pos_env_name).Value = arg_config.model.name;
     sh.Range(pos_sim_date).Value = arg_config.result.date;
-%     ƒeƒXƒgƒpƒ^[ƒ“
+%     ãƒ†ã‚¹ãƒˆãƒ‘ã‚¿ãƒ¼ãƒ³
     tp_pos_s = get(sh, 'Cells', row_s, tp_col);
     tp_pos_e = get(sh, 'Cells', row_e, tp_col);
     tp_range = get(sh, 'Range', tp_pos_s, tp_pos_e);
     if strcmp(arg_config.mode, 'SB')    
-        tp_range.Value = [{'ƒeƒXƒgƒpƒ^[ƒ“'}; arg_config.signalBuilder.testpattern'];
+        tp_range.Value = [{'ãƒ†ã‚¹ãƒˆãƒ‘ã‚¿ãƒ¼ãƒ³'}; arg_config.signalBuilder.testpattern'];
     elseif strcmp(arg_config.mode, 'SE')
-        % –‘O‚É 'ƒeƒXƒgƒpƒ^[ƒ“' ‚ğŠÜ‚ß‚½ƒZƒ‹”z—ñ‚ğ‰Šú‰»
-        tp_range.Value = [{'ƒeƒXƒgƒpƒ^[ƒ“'}; cell(arg_config.signalEditor.numScenarios, 1)];
+        % äº‹å‰ã« 'ãƒ†ã‚¹ãƒˆãƒ‘ã‚¿ãƒ¼ãƒ³' ã‚’å«ã‚ãŸã‚»ãƒ«é…åˆ—ã‚’åˆæœŸåŒ–
+        tp_range.Value = [{'ãƒ†ã‚¹ãƒˆãƒ‘ã‚¿ãƒ¼ãƒ³'}; cell(arg_config.signalEditor.numScenarios, 1)];
 
-        % ƒVƒiƒŠƒI”•ªƒ‹[ƒv‚µ‚Ä scenarioName ‚ğ’Ç‰Á
+        % ã‚·ãƒŠãƒªã‚ªæ•°åˆ†ãƒ«ãƒ¼ãƒ—ã—ã¦ scenarioName ã‚’è¿½åŠ 
         for k = 1:length(arg_config.validIdx)
             idx = arg_config.validIdx(k);
             tp_range.Value{k+1} = arg_config.signalEditor.scenarioDetails(idx).scenarioName;
         end   
     else
     end    
-    % M†ƒf[ƒ^
+    % ä¿¡å·ãƒ‡ãƒ¼ã‚¿
     sig_pos_s = get(sh, 'Cells', row_s, sig_col_s);
     sig_pos_e = get(sh, 'Cells', row_e, sig_col_e);
     sig_range = get(sh, 'Range', sig_pos_s, sig_pos_e);
 
 summaryCell = cell(tp_num+1, sig_num);
-% ƒwƒbƒ_
+% ãƒ˜ãƒƒãƒ€
 summaryCell(1,:) = allSig;
-% ƒf[ƒ^
+% ãƒ‡ãƒ¼ã‚¿
 for r = 1:tp_num
     scenarioSig = arg_config.result.sigName{r};
-    scenarioJudge = arg_config.result.judgement{r};  % © ’Ç‰Á
+    scenarioJudge = arg_config.result.judgement{r};  % â† è¿½åŠ 
 
     for c = 1:sig_num
         idx = find(strcmp(scenarioSig, allSig{c}));
@@ -604,7 +612,7 @@ sig_range.Value = summaryCell;
         ok_range_1 = ok_range.Address;
         ok_range_next = '';
         while(~strcmp(ok_range_1, ok_range_next))
-            ok_range.Interior.Color = hex2dec('00FF00');  % —Î
+            ok_range.Interior.Color = hex2dec('00FF00');  % ç·‘
             % ok_range.Interior.Color = hex2dec('80FFFF');
             ok_range = sig_range.FindNext(ok_range);
             ok_range_next = ok_range.Address;
@@ -625,9 +633,9 @@ function outSigData(~, arg_wb, arg_data, arg_testpattern)
     pos_e = get(sh_new, 'Cells', pos_row, pos_col);
     rng = get(sh_new, 'Range', pos_s, pos_e);
 
-% --- Time—ñ‚ğ•K‚¸¶’[‚É’Ç‰Á ---
+% --- Timeåˆ—ã‚’å¿…ãšå·¦ç«¯ã«è¿½åŠ  ---
 % if ~strcmp(arg_data{1,1}, 'Time')
-%     time_col = arg_data(:,1);      % Time—ñievaluateSimulationOutput‚Å¶¬Ï‚İj
+%     time_col = arg_data(:,1);      % Timeåˆ—ï¼ˆevaluateSimulationOutputã§ç”Ÿæˆæ¸ˆã¿ï¼‰
 %     arg_data = [time_col, arg_data(:,2:end)];
 % end
 
